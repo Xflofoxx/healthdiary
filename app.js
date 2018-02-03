@@ -28,7 +28,11 @@ db.once('open', function() {
     console.log('MongoDB connected!');
 });
 
-app.engine('hbs', exphbs({ defaultLayout: 'main', extname: 'hbs' }));
+app.engine('hbs', exphbs({
+    defaultLayout: 'main',
+    extname: 'hbs',
+    partialsDir: path.join(__dirname, '/views/partials')
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

@@ -57,5 +57,8 @@ typings/
 # dotenv environment variables file
 .env
 
-#auth data
+#Exclude auth data
 auth/*.*
+
+# Exclude assets for project
+assets
