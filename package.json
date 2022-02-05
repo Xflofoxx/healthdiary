@@ -1,46 +1,32 @@
 {
-  "name": "healthdiary",
-  "version": "0.1.0",
-  "description": "A personal health diary, on which to note the illnesses, the prescriptions and the appointments with the doctors.",
-  "main": "app.js",
-  "scripts": {
-    "start": "node ./bin/www",
-    "devstart": "nodemon ./bin/www",
-    "prepare": "npm run snyk-protect",
-    "snyk-protect": "snyk-protect"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Xflofoxx/healthdiary.git"
-  },
-  "author": "Dario Olivini <xflofoxx@gmail.com>",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Xflofoxx/healthdiary/issues"
-  },
-  "homepage": "https://github.com/Xflofoxx/healthdiary#readme",
-  "dependencies": {
-    "body-parser": "^1.18.2",
-    "cookie-parser": "^1.4.3",
-    "express": "^4.16.2",
-    "express-handlebars": "^3.0.0",
-    "express-session": "^1.15.6",
-    "find-or-create": "^1.1.0",
-    "material-ui": "^1.0.0-beta.31",
-    "material-ui-icons": "^1.0.0-beta.17",
-    "mongoose": "^5.13.9",
-    "morgan": "^1.9.1",
-    "passport": "^0.4.0",
-    "passport-facebook": "^2.1.1",
-    "passport-github": "^1.1.0",
-    "passport-google-oauth": "^1.0.0",
-    "passport-twitter": "^1.0.4",
-    "serve-favicon": "^2.4.5",
-    "@snyk/protect": "latest"
-  },
-  "devDependencies": {
-    "eslint": "^4.16.0",
-    "nodemon": "^1.14.11"
-  },
-  "snyk": true
+    "name": "healthdiary",
+    "version": "0.1.0",
+    "description": "A personal health diary, on which to note the illnesses, the prescriptions and the appointments with the doctors.",
+    "engines": {
+        "node": ">=12.0.0"
+    },
+    "scripts": {
+        "start": "node index.js",
+        "start:dev": "node -r dotenv/config index.js dotenv_config_path=.env.dev",
+        "start:all": ""
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Xflofoxx/healthdiary.git"
+    },
+    "author": "Dario Olivini <xflofoxx@gmail.com>",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Xflofoxx/healthdiary/issues"
+    },
+    "homepage": "https://github.com/Xflofoxx/healthdiary#readme",
+    "dependencies": {
+        "cors": "^2.8.5",
+        "dotenv": "^14.2.0",
+        "express": "^4.17.2",
+        "mongoose": "^6.1.7"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.15"
+    }
 }
