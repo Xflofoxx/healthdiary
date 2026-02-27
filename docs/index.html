@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Healthdiary - Personal Health Diary</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Healthdiary</h1>
+      <p class="tagline">Your personal health companion</p>
+    </div>
+  </header>
+
+  <nav class="navbar">
+    <div class="container">
+      <a href="#features">Features</a>
+      <a href="#tech-stack">Tech Stack</a>
+      <a href="#getting-started">Getting Started</a>
+      <a href="#api">API</a>
+      <a href="#contributing">Contributing</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section id="hero" class="hero">
+      <h2>Track Your Health Journey</h2>
+      <p>A modern personal health diary for recording illnesses, prescriptions, and doctor appointments.</p>
+      <div class="badges">
+        <span class="badge">Bun.js</span>
+        <span class="badge">SQLite</span>
+        <span class="badge">DuckDB</span>
+        <span class="badge">Angular</span>
+      </div>
+      <a href="#getting-started" class="btn btn-primary">Get Started</a>
+      <a href="https://github.com/Xflofoxx/healthdiary" class="btn btn-secondary">View on GitHub</a>
+    </section>
+
+    <section id="features">
+      <h2>Features</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <h3>Illness Tracking</h3>
+          <p>Record and monitor illnesses with start/end dates, notes, and status tracking (active/resolved/chronic).</p>
+        </div>
+        <div class="feature-card">
+          <h3>Prescription Management</h3>
+          <p>Keep track of medications, dosages, frequencies, and link prescriptions to specific illnesses.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Appointment Scheduling</h3>
+          <p>Schedule and manage doctor appointments with calendar and list views.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Analytics</h3>
+          <p>DuckDB-powered analytics for health trends, duration statistics, and visit frequency.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Modern Stack</h3>
+          <p>Built with Bun.js, Hono, SQLite, DuckDB, and Angular for maximum performance.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Open Source</h3>
+          <p>Fully open source under ISC license. Free to use and contribute.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="tech-stack">
+      <h2>Tech Stack</h2>
+      <div class="tech-table">
+        <div class="tech-item">
+          <h3>Runtime</h3>
+          <p>Bun.js 1.1+</p>
+          <span class="tech-desc">High-performance JavaScript runtime</span>
+        </div>
+        <div class="tech-item">
+          <h3>Framework</h3>
+          <p>Hono 4.0+</p>
+          <span class="tech-desc">Lightweight web framework</span>
+        </div>
+        <div class="tech-item">
+          <h3>Database</h3>
+          <p>SQLite + DuckDB</p>
+          <span class="tech-desc">Persistent + Analytics</span>
+        </div>
+        <div class="tech-item">
+          <h3>Frontend</h3>
+          <p>Angular 19+</p>
+          <span class="tech-desc">Modern component framework</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="getting-started">
+      <h2>Getting Started</h2>
+      
+      <h3>Prerequisites</h3>
+      <ul>
+        <li>Bun.js 1.1+</li>
+        <li>Node.js 18+</li>
+        <li>Git</li>
+      </ul>
+
+      <h3>Installation</h3>
+      <pre><code># Clone the repository
+git clone https://github.com/Xflofoxx/healthdiary.git
+cd healthdiary
+
+# Install server dependencies
+bun install
+
+# Install client dependencies
+cd client && bun install && cd ..</code></pre>
+
+      <h3>Running the Application</h3>
+      <pre><code># Run migrations
+bun run migrate
+
+# Start the server
+bun run dev
+
+# In another terminal, start the client
+cd client && bun start</code></pre>
+
+      <p>Server: <code>http://localhost:3000</code> | Client: <code>http://localhost:4200</code></p>
+    </section>
+
+    <section id="api">
+      <h2>API Reference</h2>
+      
+      <h3>Base URL</h3>
+      <pre><code>http://localhost:3000/api/v1</code></pre>
+
+      <h3>Endpoints</h3>
+      
+      <h4>Illnesses</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Endpoint</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>GET</td>
+            <td>/illnesses</td>
+            <td>List all illnesses</td>
+          </tr>
+          <tr>
+            <td>GET</td>
+            <td>/illnesses/:id</td>
+            <td>Get illness by ID</td>
+          </tr>
+          <tr>
+            <td>POST</td>
+            <td>/illnesses</td>
+            <td>Create new illness</td>
+          </tr>
+          <tr>
+            <td>PUT</td>
+            <td>/illnesses/:id</td>
+            <td>Update illness</td>
+          </tr>
+          <tr>
+            <td>DELETE</td>
+            <td>/illnesses/:id</td>
+            <td>Delete illness</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>Prescriptions</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Endpoint</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>GET</td>
+            <td>/prescriptions</td>
+            <td>List all prescriptions</td>
+          </tr>
+          <tr>
+            <td>GET</td>
+            <td>/prescriptions/:id</td>
+            <td>Get prescription by ID</td>
+          </tr>
+          <tr>
+            <td>POST</td>
+            <td>/prescriptions</td>
+            <td>Create new prescription</td>
+          </tr>
+          <tr>
+            <td>PUT</td>
+            <td>/prescriptions/:id</td>
+            <td>Update prescription</td>
+          </tr>
+          <tr>
+            <td>DELETE</td>
+            <td>/prescriptions/:id</td>
+            <td>Delete prescription</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>Appointments</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Endpoint</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>GET</td>
+            <td>/appointments</td>
+            <td>List all appointments</td>
+          </tr>
+          <tr>
+            <td>GET</td>
+            <td>/appointments/:id</td>
+            <td>Get appointment by ID</td>
+          </tr>
+          <tr>
+            <td>POST</td>
+            <td>/appointments</td>
+            <td>Create new appointment</td>
+          </tr>
+          <tr>
+            <td>PUT</td>
+            <td>/appointments/:id</td>
+            <td>Update appointment</td>
+          </tr>
+          <tr>
+            <td>DELETE</td>
+            <td>/appointments/:id</td>
+            <td>Delete appointment</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="contributing">
+      <h2>Contributing</h2>
+      <p>Contributions are welcome! Please read our <a href="spec/WORKFLOW.md">Workflow Specification</a> for details on how to contribute.</p>
+      
+      <h3>Development Process</h3>
+      <ol>
+        <li>Create a feature branch: <code>git checkout -b feat/xxx-description</code></li>
+        <li>Follow the workflow specification</li>
+        <li>Write tests for new features</li>
+        <li>Ensure all tests pass</li>
+        <li>Submit a pull request</li>
+      </ol>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 Healthdiary. Built with Bun.js, SQLite, DuckDB, and Angular.</p>
+      <p>License: ISC | Author: <a href="mailto:xflofoxx@gmail.com">Dario Olivini</a></p>
+    </div>
+  </footer>
+</body>
+</html>
