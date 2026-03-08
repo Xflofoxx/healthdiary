@@ -35,6 +35,7 @@ This document outlines the planned versions and their associated requirements.
 | SERV-004 | SQLite database setup (bun:sqlite) | ✅ Complete |
 | SERV-005 | DuckDB analytics setup | ✅ Complete |
 | SERV-006 | Health check endpoint | ✅ Complete |
+| SERV-007 | WebAuthn authentication | ✅ Complete |
 
 ### Client Requirements
 
@@ -45,6 +46,7 @@ This document outlines the planned versions and their associated requirements.
 | CLIENT-003 | Prescription list view | ✅ Complete |
 | CLIENT-004 | Appointment list view | ✅ Complete |
 | CLIENT-005 | Add/Edit forms | ✅ Complete |
+| CLIENT-006 | Authentication pages (WebAuthn) | ✅ Complete |
 
 ---
 
@@ -60,25 +62,11 @@ This document outlines the planned versions and their associated requirements.
 | CORE-004 | Symptom tracking | Planned |
 | CORE-005 | Medication reminders | Planned |
 | CORE-006 | Export data to PDF | Planned |
-| SERV-007 | Data export functionality | Planned |
-| CLIENT-006 | Dashboard with statistics | Planned |
-| CLIENT-007 | Dark/Light theme | Planned |
-
----
-
-## Version 1.2.0 - Advanced Analytics
-
-**Target Date**: TBD  
-**Status**: Planned
-
-### Planned Features
-
-| ID | Requirement | Status |
-|----|-------------|--------|
-| SERV-008 | Analytics queries in DuckDB | Planned |
-| SERV-009 | Trend analysis | Planned |
-| CLIENT-008 | Charts and visualizations | Planned |
-| CLIENT-009 | Date range filters | Planned |
+| SERV-008 | Data export functionality | Planned |
+| SERV-009 | Analytics queries in DuckDB | Planned |
+| CLIENT-007 | Dashboard with statistics | Planned |
+| CLIENT-008 | Dark/Light theme | Planned |
+| CLIENT-009 | Charts and visualizations | Planned |
 
 ---
 
@@ -86,9 +74,8 @@ This document outlines the planned versions and their associated requirements.
 
 | Version | Focus | Release Date | Status |
 |---------|-------|-------------|--------|
-| 1.0.0 | Foundation | 2026-03-08 | ✅ Released |
+| 1.0.0 | Foundation + Auth | 2026-03-08 | ✅ Released |
 | 1.1.0 | Enhanced Features | TBD | Planned |
-| 1.2.0 | Advanced Analytics | TBD | Planned |
 
 ---
 
