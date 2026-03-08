@@ -3,8 +3,11 @@ import { getDb } from "../db/sqlite";
 import { queryDuckDb } from "../db/duckdb";
 import { v4 as uuid } from "uuid";
 import type { Appointment, AppointmentInput } from "../models/appointment";
+import { requireAuth } from "../middleware/auth";
 
 const appointmentsRouter = new Hono();
+
+appointmentsRouter.use("*", requireAuth);
 
 appointmentsRouter.get("/", (c) => {
   const db = getDb();

@@ -2,7 +2,7 @@
 
 > **Version**: 1.0.0  
 > **Component**: Server  
-> **Related Requirements**: SERV-001 through SERV-006  
+> **Related Requirements**: SERV-001 through SERV-007  
 > **Status**: Implementation Ready
 
 ## 1. Overview
@@ -81,6 +81,23 @@ server/src/
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | /health | Health check |
+
+#### Authentication (SERV-007)
+
+| Method | Path | Description | Auth Required |
+|--------|------|-------------|---------------|
+| GET | /api/v1/auth/register/options | Get WebAuthn registration options | No |
+| POST | /api/v1/auth/register/verify | Verify and store credential | No |
+| GET | /api/v1/auth/login/options | Get WebAuthn login options | No |
+| POST | /api/v1/auth/login/verify | Verify and create session | No |
+| POST | /api/v1/auth/logout | Logout and destroy session | Yes |
+| GET | /api/v1/auth/me | Get current user | Yes |
+
+#### Public Pages
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | / | Public home page (project description) |
 
 ### 4.2 Request/Response Formats
 
@@ -176,6 +193,36 @@ CREATE INDEX idx_illnesses_status ON illnesses(status);
 CREATE INDEX idx_prescriptions_illness ON prescriptions(illness_id);
 CREATE INDEX idx_appointments_date ON appointments(date);
 CREATE INDEX idx_appointments_illness ON appointments(illness_id);
+
+-- Users table (SERV-007)
+CREATE TABLE IF NOT EXISTS users (
+  id TEXT PRIMARY KEY,
+  username TEXT UNIQUE NOT NULL,
+  display_name TEXT,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Credentials table (SERV-007)
+CREATE TABLE IF NOT EXISTS credentials (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  credential_id TEXT NOT NULL,
+  public_key TEXT NOT NULL,
+  counter INTEGER DEFAULT 0,
+  device_type TEXT,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Sessions table (SERV-007)
+CREATE TABLE IF NOT EXISTS sessions (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  expires_at TEXT NOT NULL,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 ```
 
 ### 5.2 DuckDB (analytics.duckdb)

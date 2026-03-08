@@ -13,6 +13,7 @@
         "@angular/platform-browser": "^19.0.0",
         "@angular/platform-browser-dynamic": "^19.0.0",
         "@angular/router": "^19.0.0",
+        "@simplewebauthn/browser": "^9.0.0",
         "rxjs": "~7.8.0",
         "tslib": "^2.3.0",
         "zone.js": "~0.15.0",
@@ -554,6 +555,10 @@
     "@sigstore/tuf": ["@sigstore/tuf@3.1.1", "", { "dependencies": { "@sigstore/protobuf-specs": "^0.4.1", "tuf-js": "^3.0.1" } }, "sha512-eFFvlcBIoGwVkkwmTi/vEQFSva3xs5Ot3WmBcjgjVdiaoelBLQaQ/ZBfhlG0MnG0cmTYScPpk7eDdGDWUcFUmg=="],
 
     "@sigstore/verify": ["@sigstore/verify@2.1.1", "", { "dependencies": { "@sigstore/bundle": "^3.1.0", "@sigstore/core": "^2.0.0", "@sigstore/protobuf-specs": "^0.4.1" } }, "sha512-hVJD77oT67aowHxwT4+M6PGOp+E2LtLdTK3+FC0lBO9T7sYwItDMXZ7Z07IDCvR1M717a4axbIWckrW67KMP/w=="],
+
+    "@simplewebauthn/browser": ["@simplewebauthn/browser@9.0.1", "", { "dependencies": { "@simplewebauthn/types": "^9.0.1" } }, "sha512-wD2WpbkaEP4170s13/HUxPcAV5y4ZXaKo1TfNklS5zDefPinIgXOpgz1kpEvobAsaLPa2KeH7AKKX/od1mrBJw=="],
+
+    "@simplewebauthn/types": ["@simplewebauthn/types@9.0.1", "", {}, "sha512-tGSRP1QvsAvsJmnOlRQyw/mvK9gnPtjEc5fg2+m8n+QUa+D7rvrKkOYyfpy42GTs90X3RDOnqJgfHt+qO67/+w=="],
 
     "@sindresorhus/merge-streams": ["@sindresorhus/merge-streams@2.3.0", "", {}, "sha512-LtoMMhxAlorcGhmFYI+LhPgbPZCkgP6ra1YL604EeF6U98pLlQ3iWIGMdWSC+vWmPBWBNgmDBAhnAobLROJmwg=="],
 
