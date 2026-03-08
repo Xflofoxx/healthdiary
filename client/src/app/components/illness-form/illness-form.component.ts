@@ -26,8 +26,8 @@ import { Illness, IllnessInput } from '../../models/illness.model';
           maxlength="200"
           class="form-control"
         >
-        @if (errors.name) {
-          <span class="error">{{ errors.name }}</span>
+        @if (errors['name']) {
+          <span class="error">{{ errors['name'] }}</span>
         }
       </div>
 
@@ -190,7 +190,7 @@ export class IllnessFormComponent implements OnInit {
   validate(): boolean {
     this.errors = {};
     if (!this.form.name?.trim()) {
-      this.errors.name = 'Name is required';
+      this.errors['name'] = 'Name is required';
     }
     if (!this.form.startDate) {
       this.errors['startDate'] = 'Start date is required';

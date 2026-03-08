@@ -53,7 +53,7 @@ git clone https://github.com/Xflofoxx/healthdiary.git
 cd healthdiary
 
 # Install server dependencies
-bun install
+cd server && bun install && cd ..
 
 # Install client dependencies
 cd client && bun install && cd ..
@@ -62,14 +62,14 @@ cd client && bun install && cd ..
 ### Running the Application
 
 ```bash
-# Run migrations (first time only)
+# Terminal 1: Start the server
+cd server
 bun run migrate
-
-# Start the server
 bun run dev
 
-# In another terminal, start the client
-cd client && bun start
+# Terminal 2: Start the client
+cd client
+bun start
 ```
 
 The server will be available at `http://localhost:3000` and the client at `http://localhost:4200`.

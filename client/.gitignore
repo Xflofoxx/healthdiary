@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.angular/
+*.log
+.env
+.env.*
+data/
+*.db
+*.duckdb
