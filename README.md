@@ -14,16 +14,16 @@ A personal health diary application for tracking illnesses, prescriptions, and d
 
 - **Illness Tracking** - Record and monitor illnesses with start/end dates, notes, and status (active/resolved/chronic)
 - **Prescription Management** - Track medications, dosages, frequencies, and link them to illnesses
-- **Doctor Appointments** - Schedule and manage medical appointments with calendar view
-- **Analytics Dashboard** - DuckDB-powered analytics for health trends and statistics
+- **Doctor Appointments** - Schedule and manage medical appointments with list view
+- **Analytics** - DuckDB-powered analytics for health trends and statistics
 
 ### Technical Features
 
 - RESTful API built with Bun.js and Hono
-- SQLite for persistent data storage
+- SQLite for persistent data storage (via bun:sqlite)
 - DuckDB for time-series analytics
-- Angular 19+ standalone components
-- Comprehensive test coverage
+- Angular 19+ standalone components with new control flow (@if, @for)
+- Lazy loading for routes
 - GitHub Pages documentation
 
 ## Tech Stack
@@ -32,9 +32,9 @@ A personal health diary application for tracking illnesses, prescriptions, and d
 |-----------|------------|
 | Runtime | Bun.js 1.1+ |
 | Framework | Hono 4.0+ |
-| Persistent DB | SQLite (better-sqlite3) |
+| SQLite | bun:sqlite |
 | Analytics DB | DuckDB |
-| Language | TypeScript |
+| Language | TypeScript 5.6+ |
 | Frontend | Angular 19+ |
 
 ## Quick Start
@@ -42,7 +42,6 @@ A personal health diary application for tracking illnesses, prescriptions, and d
 ### Prerequisites
 
 - Bun.js 1.1+
-- Node.js 18+ (for Angular CLI)
 - Git
 
 ### Installation
@@ -52,19 +51,29 @@ A personal health diary application for tracking illnesses, prescriptions, and d
 git clone https://github.com/Xflofoxx/healthdiary.git
 cd healthdiary
 
-# Install server dependencies
+# Install dependencies for server and client
 cd server && bun install && cd ..
-
-# Install client dependencies
 cd client && bun install && cd ..
 ```
 
 ### Running the Application
 
+#### Option 1: Using the startup script
+
+```bash
+# On Windows
+bin\start.bat
+
+# On Linux/Mac
+bun bin/start
+```
+
+#### Option 2: Manual startup
+
 ```bash
 # Terminal 1: Start the server
 cd server
-bun run migrate
+bun run migrate  # Only first time
 bun run dev
 
 # Terminal 2: Start the client
@@ -94,6 +103,10 @@ http://localhost:3000/api/v1
 | PUT | /illnesses/:id | Update illness |
 | DELETE | /illnesses/:id | Delete illness |
 
+**Query Parameters:**
+- `search` - Search by name
+- `status` - Filter by status (active/resolved/chronic)
+
 #### Prescriptions
 
 | Method | Endpoint | Description |
@@ -103,6 +116,11 @@ http://localhost:3000/api/v1
 | POST | /prescriptions | Create new prescription |
 | PUT | /prescriptions/:id | Update prescription |
 | DELETE | /prescriptions/:id | Delete prescription |
+
+**Query Parameters:**
+- `search` - Search by medication name
+- `illnessId` - Filter by illness
+- `active` - Filter active prescriptions
 
 #### Appointments
 
@@ -114,36 +132,65 @@ http://localhost:3000/api/v1
 | PUT | /appointments/:id | Update appointment |
 | DELETE | /appointments/:id | Delete appointment |
 
+**Query Parameters:**
+- `illnessId` - Filter by illness
+- `dateFrom` - Filter from date
+- `dateTo` - Filter to date
+- `specialty` - Filter by specialty
+
 #### Health
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | /health | Health check |
+| GET | /health | Health check with service status |
 
 ## Project Structure
 
 ```
 healthdiary/
-├── docs/                  # GitHub Pages documentation
-├── spec/                 # Project specifications
-│   ├── server/           # Server requirements
-│   ├── client/           # Client requirements
-│   ├── CONTEXT.md       # Development constitution
-│   ├── ROADMAP.md       # Version roadmap
-│   └── ...
-├── server/               # Bun.js server
-│   └── src/
-│       ├── routes/      # API routes
-│       ├── services/    # Business logic
-│       ├── db/          # Database connections
-│       └── utils/       # Utilities
-└── client/              # Angular client
-    └── src/
-        ├── app/
-        │   ├── components/
-        │   ├── services/
-        │   └── models/
-        └── styles.css
+├── bin/                     # Startup scripts
+│   ├── start               # Bun script (Unix)
+│   └── start.bat           # Windows batch script
+├── docs/                   # GitHub Pages documentation
+├── spec/                   # Project specifications
+│   ├── server/             # Server requirements (SERV-001 to SERV-006)
+│   ├── client/             # Client requirements (CLIENT-001 to CLIENT-005)
+│   ├── CONTEXT.md          # Development constitution
+│   ├── ROADMAP.md          # Version roadmap
+│   ├── WORKFLOW.md         # Git workflow
+│   ├── CODING_STYLE.md     # Coding standards
+│   ├── TESTS.md            # Test strategy
+│   └── SERVER.md           # Server architecture
+├── server/                 # Bun.js server
+│   ├── src/
+│   │   ├── index.ts        # Entry point
+│   │   ├── routes/         # API routes
+│   │   │   ├── illnesses.ts
+│   │   │   ├── prescriptions.ts
+│   │   │   ├── appointments.ts
+│   │   │   └── health.ts
+│   │   ├── models/         # Data models
+│   │   ├── db/             # Database connections
+│   │   │   ├── sqlite.ts
+│   │   │   ├── duckdb.ts
+│   │   │   └── migrate.ts
+│   │   ├── middleware/     # Express-like middleware
+│   │   └── utils/          # Utilities
+│   └── package.json
+└── client/                # Angular client
+    ├── src/
+    │   ├── app/
+    │   │   ├── components/ # UI components
+    │   │   │   ├── illness-list/
+    │   │   │   ├── illness-form/
+    │   │   │   ├── prescription-list/
+    │   │   │   ├── prescription-form/
+    │   │   │   ├── appointment-list/
+    │   │   │   └── appointment-form/
+    │   │   ├── services/   # API services
+    │   │   └── models/     # TypeScript interfaces
+    │   └── styles.css
+    └── package.json
 ```
 
 ## Development
@@ -152,20 +199,26 @@ healthdiary/
 
 ```bash
 # Server tests
-bun test
+cd server && bun test
 
 # With coverage
-bun test --coverage
+cd server && bun test --coverage
+```
+
+### Database Migrations
+
+```bash
+cd server && bun run migrate
 ```
 
 ### Code Quality
 
 ```bash
-# Lint
-bun run lint
+# Lint (server)
+cd server && bun run lint
 
-# Format
-bun run format
+# Format (server)
+cd server && bun run format
 ```
 
 ## Contributing

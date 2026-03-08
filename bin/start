@@ -1,0 +1,46 @@
+#!/usr/bin/env bun
+
+import { spawn } from "child_process";
+import { resolve } from "path";
+
+const ROOT = resolve(import.meta.dir, "..");
+const SERVER_DIR = resolve(ROOT, "server");
+const CLIENT_DIR = resolve(ROOT, "client");
+
+console.log("Starting Healthdiary...");
+console.log("=".repeat(40));
+
+async function startServer() {
+  console.log("\n[1/2] Starting server...");
+  const server = spawn("bun", ["run", "dev"], {
+    cwd: SERVER_DIR,
+    stdio: "inherit",
+    shell: true,
+  });
+  return server;
+}
+
+async function startClient() {
+  console.log("\n[2/2] Starting client...");
+  const client = spawn("bun", ["start"], {
+    cwd: CLIENT_DIR,
+    stdio: "inherit",
+    shell: true,
+  });
+  return client;
+}
+
+const [server, client] = await Promise.all([startServer(), startClient()]);
+
+console.log("\n" + "=".repeat(40));
+console.log("Healthdiary is running!");
+console.log("Server: http://localhost:3000");
+console.log("Client: http://localhost:4200");
+console.log("=".repeat(40));
+
+process.on("SIGINT", () => {
+  console.log("\nShutting down...");
+  server.kill();
+  client.kill();
+  process.exit(0);
+});

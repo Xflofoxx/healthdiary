@@ -110,20 +110,25 @@ git clone https://github.com/Xflofoxx/healthdiary.git
 cd healthdiary
 
 # Install server dependencies
-bun install
+cd server && bun install && cd ..
 
 # Install client dependencies
 cd client && bun install && cd ..</code></pre>
 
       <h3>Running the Application</h3>
-      <pre><code># Run migrations
-bun run migrate
+      <pre><code># Option 1: Using the startup script
+bun bin/start
 
-# Start the server
+# Option 2: Manual startup (two terminals)
+
+# Terminal 1: Server
+cd server
+bun run migrate  # Only first time
 bun run dev
 
-# In another terminal, start the client
-cd client && bun start</code></pre>
+# Terminal 2: Client
+cd client
+bun start</code></pre>
 
       <p>Server: <code>http://localhost:3000</code> | Client: <code>http://localhost:4200</code></p>
     </section>
