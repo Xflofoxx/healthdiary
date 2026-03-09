@@ -1,33 +1,33 @@
-import { Hono } from "hono";
-import { getDb } from "../db/sqlite";
-import { getDuckDb } from "../db/duckdb";
+import { Hono } from 'hono';
+import { getDuckDb } from '../db/duckdb';
+import { getDb } from '../db/sqlite';
 
 const healthRouter = new Hono();
 
-let serverStartTime = Date.now();
+const serverStartTime = Date.now();
 
-healthRouter.get("/health", (c) => {
+healthRouter.get('/health', (c) => {
   const services: Record<string, string> = {
-    sqlite: "error",
-    duckdb: "error",
+    sqlite: 'error',
+    duckdb: 'error',
   };
 
   try {
-    getDb().prepare("SELECT 1").get();
-    services.sqlite = "connected";
+    getDb().prepare('SELECT 1').get();
+    services.sqlite = 'connected';
   } catch {
-    services.sqlite = "error";
+    services.sqlite = 'error';
   }
 
   try {
-    getDuckDb().run("SELECT 1");
-    services.duckdb = "connected";
+    getDuckDb().run('SELECT 1');
+    services.duckdb = 'connected';
   } catch {
-    services.duckdb = "error";
+    services.duckdb = 'error';
   }
 
-  const allConnected = Object.values(services).every((s) => s === "connected");
-  const status = allConnected ? "healthy" : "unhealthy";
+  const allConnected = Object.values(services).every((s) => s === 'connected');
+  const status = allConnected ? 'healthy' : 'unhealthy';
   const httpStatus = allConnected ? 200 : 503;
 
   return c.json(

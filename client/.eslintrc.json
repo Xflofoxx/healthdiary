@@ -1,0 +1,30 @@
+{
+  "root": true,
+  "ignorePatterns": ["projects/**/*", "src/**/*.spec.ts"],
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "project": ["tsconfig.json"]
+      },
+      "plugins": ["@angular-eslint", "@typescript-eslint"],
+      "rules": {
+        "@angular-eslint/directive-selector": [
+          "error",
+          { "type": "attribute", "prefix": "app", "style": "camelCase" }
+        ],
+        "@angular-eslint/component-selector": [
+          "error",
+          { "type": "element", "prefix": "app", "style": "kebab-case" }
+        ]
+      },
+      "extends": ["plugin:@angular-eslint/recommended"]
+    },
+    {
+      "files": ["*.html"],
+      "parser": "@angular-eslint/template-parser",
+      "extends": ["plugin:@angular-eslint/template/recommended"]
+    }
+  ]
+}

@@ -1,11 +1,11 @@
-import { Database } from "bun:sqlite";
-import { resolve } from "path";
+import { Database } from 'bun:sqlite';
+import { resolve } from 'path';
 
 let db: Database | null = null;
 
 export function getDb(): Database {
   if (!db) {
-    const dbPath = resolve(process.cwd(), "data", "healthdiary.db");
+    const dbPath = resolve(process.cwd(), 'data', 'healthdiary.db');
     db = new Database(dbPath);
   }
   return db;

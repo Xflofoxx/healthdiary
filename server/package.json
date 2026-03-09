@@ -1,6 +1,6 @@
 {
   "name": "healthdiary-server",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Healthdiary REST API server",
   "type": "module",
   "scripts": {
@@ -8,8 +8,10 @@
     "start": "bun run src/index.ts",
     "test": "bun test",
     "test:coverage": "bun test --coverage",
+    "test:watch": "bun test --watch",
     "migrate": "bun run src/db/migrate.ts",
     "lint": "biome check .",
+    "lint:fix": "biome check --write .",
     "format": "biome format --write ."
   },
   "dependencies": {

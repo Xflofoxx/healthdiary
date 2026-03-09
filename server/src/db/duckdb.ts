@@ -1,11 +1,11 @@
-import DuckDB from "duckdb";
-import { resolve } from "path";
+import { resolve } from 'path';
+import DuckDB from 'duckdb';
 
 let db: DuckDB.Database | null = null;
 
 export function getDuckDb(): DuckDB.Database {
   if (!db) {
-    const dbPath = resolve(process.cwd(), "data", "analytics.duckdb");
+    const dbPath = resolve(process.cwd(), 'data', 'analytics.duckdb');
     db = new DuckDB.Database(dbPath);
   }
   return db;

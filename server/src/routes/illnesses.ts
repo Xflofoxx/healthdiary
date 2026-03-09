@@ -1,40 +1,40 @@
-import { Hono } from "hono";
-import { getDb } from "../db/sqlite";
-import { queryDuckDb } from "../db/duckdb";
-import { v4 as uuid } from "uuid";
-import type { Illness, IllnessInput } from "../models/illness";
-import { requireAuth } from "../middleware/auth";
+import { Hono } from 'hono';
+import { v4 as uuid } from 'uuid';
+import { queryDuckDb } from '../db/duckdb';
+import { getDb } from '../db/sqlite';
+import { requireAuth } from '../middleware/auth';
+import type { Illness, IllnessInput } from '../models/illness';
 
 const illnessesRouter = new Hono();
 
-illnessesRouter.use("*", requireAuth);
+illnessesRouter.use('*', requireAuth);
 
-illnessesRouter.get("/", (c) => {
+illnessesRouter.get('/', (c) => {
   const db = getDb();
   const { search, status } = c.req.query();
-  
-  let sql = "SELECT * FROM illnesses";
+
+  let sql = 'SELECT * FROM illnesses';
   const params: unknown[] = [];
   const conditions: string[] = [];
 
   if (search) {
-    conditions.push("name LIKE ?");
+    conditions.push('name LIKE ?');
     params.push(`%${search}%`);
   }
 
   if (status) {
-    conditions.push("status = ?");
+    conditions.push('status = ?');
     params.push(status);
   }
 
   if (conditions.length > 0) {
-    sql += " WHERE " + conditions.join(" AND ");
+    sql += ' WHERE ' + conditions.join(' AND ');
   }
 
-  sql += " ORDER BY start_date DESC";
+  sql += ' ORDER BY start_date DESC';
 
   const rows = db.prepare(sql).all(...params) as Illness[];
-  
+
   const illnesses = rows.map((row) => ({
     id: row.id,
     name: row.name,
@@ -49,14 +49,14 @@ illnessesRouter.get("/", (c) => {
   return c.json({ illnesses, total: illnesses.length });
 });
 
-illnessesRouter.get("/:id", (c) => {
-  const id = c.req.param("id");
+illnessesRouter.get('/:id', (c) => {
+  const id = c.req.param('id');
   const db = getDb();
-  
-  const row = db.prepare("SELECT * FROM illnesses WHERE id = ?").get(id) as Illness | undefined;
-  
+
+  const row = db.prepare('SELECT * FROM illnesses WHERE id = ?').get(id) as Illness | undefined;
+
   if (!row) {
-    return c.json({ error: "Illness not found" }, 404);
+    return c.json({ error: 'Illness not found' }, 404);
   }
 
   return c.json({
@@ -71,19 +71,19 @@ illnessesRouter.get("/:id", (c) => {
   });
 });
 
-illnessesRouter.post("/", async (c) => {
-  const body = await c.req.json() as IllnessInput;
-  
+illnessesRouter.post('/', async (c) => {
+  const body = (await c.req.json()) as IllnessInput;
+
   if (!body.name || !body.startDate) {
-    return c.json({ error: "Name and startDate are required" }, 400);
+    return c.json({ error: 'Name and startDate are required' }, 400);
   }
 
   const id = uuid();
   const now = new Date().toISOString();
-  const status = body.status || "active";
+  const status = body.status || 'active';
 
   const db = getDb();
-  
+
   db.prepare(`
     INSERT INTO illnesses (id, name, notes, start_date, end_date, status, created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -105,16 +105,16 @@ illnessesRouter.post("/", async (c) => {
   return c.json(illness, 201);
 });
 
-illnessesRouter.put("/:id", async (c) => {
-  const id = c.req.param("id");
-  const body = await c.req.json() as Partial<IllnessInput>;
-  
+illnessesRouter.put('/:id', async (c) => {
+  const id = c.req.param('id');
+  const body = (await c.req.json()) as Partial<IllnessInput>;
+
   const db = getDb();
   const now = new Date().toISOString();
 
-  const existing = db.prepare("SELECT * FROM illnesses WHERE id = ?").get(id);
+  const existing = db.prepare('SELECT * FROM illnesses WHERE id = ?').get(id);
   if (!existing) {
-    return c.json({ error: "Illness not found" }, 404);
+    return c.json({ error: 'Illness not found' }, 404);
   }
 
   const name = body.name ?? (existing as Illness).name;
@@ -145,31 +145,35 @@ illnessesRouter.put("/:id", async (c) => {
   return c.json(illness);
 });
 
-illnessesRouter.delete("/:id", (c) => {
-  const id = c.req.param("id");
+illnessesRouter.delete('/:id', (c) => {
+  const id = c.req.param('id');
   const db = getDb();
 
-  const existing = db.prepare("SELECT * FROM illnesses WHERE id = ?").get(id);
+  const existing = db.prepare('SELECT * FROM illnesses WHERE id = ?').get(id);
   if (!existing) {
-    return c.json({ error: "Illness not found" }, 404);
+    return c.json({ error: 'Illness not found' }, 404);
   }
 
-  db.prepare("DELETE FROM illnesses WHERE id = ?").run(id);
+  db.prepare('DELETE FROM illnesses WHERE id = ?').run(id);
 
-  return c.json({ message: "Illness deleted" });
+  return c.json({ message: 'Illness deleted' });
 });
 
 function syncToDuckDb(illness: Illness): void {
   const startDate = new Date(illness.startDate);
   const endDate = illness.endDate ? new Date(illness.endDate) : null;
-  const durationDays = endDate 
+  const durationDays = endDate
     ? Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
     : null;
 
-  queryDuckDb(
-    `INSERT INTO illness_history VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
-    [illness.id, illness.name, illness.startDate, illness.endDate, illness.status, durationDays]
-  );
+  queryDuckDb(`INSERT INTO illness_history VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`, [
+    illness.id,
+    illness.name,
+    illness.startDate,
+    illness.endDate,
+    illness.status,
+    durationDays,
+  ]);
 }
 
 export default illnessesRouter;

@@ -1,4 +1,4 @@
-import type { MiddlewareHandler } from "hono";
+import type { MiddlewareHandler } from 'hono';
 
 export const logger: MiddlewareHandler = async (c, next) => {
   const start = Date.now();
@@ -10,7 +10,7 @@ export const logger: MiddlewareHandler = async (c, next) => {
   const duration = end - start;
 
   const logMessage = `${method} ${path} ${status} ${duration}ms`;
-  
+
   if (status >= 500) {
     console.error(logMessage);
   } else if (status >= 400) {

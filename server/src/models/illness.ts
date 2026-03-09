@@ -1,4 +1,4 @@
-export type IllnessStatus = "active" | "resolved" | "chronic";
+export type IllnessStatus = 'active' | 'resolved' | 'chronic';
 
 export interface Illness {
   id: string;

@@ -1,22 +1,22 @@
-import { getDb } from "./sqlite";
-import { getDuckDb } from "./duckdb";
-import { mkdirSync, existsSync } from "fs";
-import { resolve, dirname } from "path";
+import { existsSync, mkdirSync } from 'fs';
+import { dirname, resolve } from 'path';
+import { getDuckDb } from './duckdb';
+import { getDb } from './sqlite';
 
 export function runMigrations(): void {
-  const dataDir = resolve(process.cwd(), "data");
-  
+  const dataDir = resolve(process.cwd(), 'data');
+
   if (!existsSync(dataDir)) {
     mkdirSync(dataDir, { recursive: true });
   }
 
-  console.log("Running SQLite migrations...");
+  console.log('Running SQLite migrations...');
   runSqliteMigrations();
-  
-  console.log("Running DuckDB migrations...");
+
+  console.log('Running DuckDB migrations...');
   runDuckDbMigrations();
-  
-  console.log("Migrations complete!");
+
+  console.log('Migrations complete!');
 }
 
 function runSqliteMigrations(): void {
