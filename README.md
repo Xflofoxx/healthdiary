@@ -1,7 +1,7 @@
 # Healthdiary
 
 <p align="center">
-  <img src="https://img.shields.io/badge/HealthDiary-v1.0.0-blue?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/HealthDiary-v1.2.0-blue?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/badge/Stack-Bun.js%2FSQLite%2FDuckDB%2FAngular-orange?style=for-the-badge" alt="Stack">
   <img src="https://img.shields.io/github/license/Xflofoxx/healthdiary?style=for-the-badge" alt="License">
 </p>
@@ -13,8 +13,11 @@ A personal health diary application for tracking illnesses, prescriptions, and d
 ### Core Features
 
 - **Illness Tracking** - Record and monitor illnesses with start/end dates, notes, and status (active/resolved/chronic)
-- **Prescription Management** - Track medications, dosages, frequencies, and link them to illnesses
+- **Prescription Management** - Track medications, dosages, frequencies, and link them to illnesses and doctors
+- **Doctor Directory** - Maintain a contacts list of doctors with specialty, phone, email, and notes
 - **Doctor Appointments** - Schedule and manage medical appointments with list view
+- **Calendar View** - Monthly calendar showing prescriptions and appointments
+- **Dashboard** - Statistics and charts showing health overview
 - **Analytics** - DuckDB-powered analytics for health trends and statistics
 
 ### Technical Features

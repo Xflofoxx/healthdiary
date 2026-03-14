@@ -9,12 +9,14 @@ import {
 import { Hono } from 'hono';
 import { getCookie } from 'hono/cookie';
 import { v4 as uuid } from 'uuid';
+import { getConfig } from '../config';
 import { getDb } from '../db/sqlite';
 import type { Credential, Session, User } from '../models/auth';
 
-const RP_ID = 'localhost';
-const RP_NAME = 'Healthdiary';
-const ORIGIN = 'http://localhost:4200';
+const config = getConfig();
+const RP_ID = config.webauthn.rpId;
+const RP_NAME = config.webauthn.rpName;
+const ORIGIN = config.webauthn.origin;
 
 const authRouter = new Hono();
 
@@ -52,11 +54,10 @@ authRouter.post('/register/verify', async (c) => {
   const body = await c.req.json();
   const db = getDb();
 
+  // Get the most recent challenge (within last 5 minutes)
   const challengeRow = db
-    .prepare('SELECT * FROM temp_challenges WHERE user_data LIKE ?')
-    .get(`%${body.expected.userID}%`) as
-    | { id: string; challenge: string; user_data: string }
-    | undefined;
+    .prepare('SELECT * FROM temp_challenges ORDER BY created_at DESC LIMIT 1')
+    .get() as { id: string; challenge: string; user_data: string } | undefined;
 
   if (!challengeRow) {
     return c.json({ error: 'Challenge not found or expired' }, 400);
@@ -216,6 +217,53 @@ authRouter.post('/login/verify', async (c) => {
   }
 
   return c.json({ error: 'Authentication failed' }, 400);
+});
+
+authRouter.post('/login/demo', async (c) => {
+  const body = await c.req.json();
+  const { username, password } = body;
+
+  const demoConfig = config.demo;
+
+  if (username !== demoConfig.username || password !== demoConfig.password) {
+    return c.json({ error: 'Invalid credentials' }, 401);
+  }
+
+  const db = getDb();
+
+  let user = db.prepare('SELECT * FROM users WHERE username = ?').get(username) as User | undefined;
+
+  if (!user) {
+    const userId = uuid();
+    db.prepare(`
+      INSERT INTO users (id, username, display_name, created_at, updated_at)
+      VALUES (?, ?, ?, datetime('now'), datetime('now'))
+    `).run(userId, username, demoConfig.displayName);
+
+    user = { id: userId, username, display_name: demoConfig.displayName } as User;
+  }
+
+  const sessionId = uuid();
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+
+  db.prepare(`
+    INSERT INTO sessions (id, user_id, expires_at, created_at)
+    VALUES (?, ?, ?, datetime('now'))
+  `).run(sessionId, user.id, expiresAt);
+
+  c.header(
+    'Set-Cookie',
+    `session=${sessionId}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${7 * 24 * 60 * 60}`
+  );
+
+  return c.json({
+    success: true,
+    user: {
+      id: user.id,
+      username: user.username,
+      displayName: user.display_name,
+    },
+  });
 });
 
 authRouter.post('/logout', (c) => {

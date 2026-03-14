@@ -2,106 +2,180 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PrescriptionService } from '../../services/prescription.service';
-import { IllnessService } from '../../services/illness.service';
-import { PrescriptionInput } from '../../models/prescription.model';
-import { Illness } from '../../models/illness.model';
+import { HealthService, Doctor, Illness } from '../../services/health.service';
 
 @Component({
   selector: 'app-prescription-form',
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="header"><h1>{{ isEdit ? 'Edit Prescription' : 'Add Prescription' }}</h1></div>
-    <form (ngSubmit)="onSubmit()" class="form">
-      <div class="form-group">
-        <label>Medication *</label>
-        <input type="text" [(ngModel)]="form.medication" name="medication" required class="form-control">
-      </div>
-      <div class="form-group">
-        <label>Dosage</label>
-        <input type="text" [(ngModel)]="form.dosage" name="dosage" class="form-control">
-      </div>
-      <div class="form-group">
-        <label>Frequency</label>
-        <input type="text" [(ngModel)]="form.frequency" name="frequency" class="form-control">
-      </div>
-      <div class="form-group">
-        <label>Start Date *</label>
-        <input type="date" [(ngModel)]="form.startDate" name="startDate" required class="form-control">
-      </div>
-      <div class="form-group">
-        <label>End Date</label>
-        <input type="date" [(ngModel)]="form.endDate" name="endDate" class="form-control">
-      </div>
-      <div class="form-group">
-        <label>Illness</label>
-        <select [(ngModel)]="form.illnessId" name="illnessId" class="form-control">
-          <option value="">None</option>
-          @for (illness of illnesses; track illness.id) {
-            <option [value]="illness.id">{{ illness.name }}</option>
+    <div class="page-container">
+      <header class="page-header">
+        <h1><i class="fas fa-prescription"></i> {{ isEdit ? 'Modifica Farmaco' : 'Nuovo Farmaco' }}</h1>
+      </header>
+
+      <form (ngSubmit)="onSubmit()" class="prescription-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="medication"><i class="fas fa-pills"></i> Farmaco *</label>
+            <input type="text" id="medication" [(ngModel)]="form.medication" name="medication" required class="form-control" placeholder="Nome del farmaco">
+          </div>
+
+          <div class="form-group">
+            <label for="dosage"><i class="fas fa-weight"></i> Dosaggio</label>
+            <input type="text" id="dosage" [(ngModel)]="form.dosage" name="dosage" class="form-control" placeholder="es. 500mg">
+          </div>
+
+          <div class="form-group">
+            <label for="frequency"><i class="fas fa-clock"></i> Frequenza</label>
+            <input type="text" id="frequency" [(ngModel)]="form.frequency" name="frequency" class="form-control" placeholder="es. 2 volte al giorno">
+          </div>
+
+          <div class="form-group">
+            <label for="doctorId"><i class="fas fa-user-md"></i> Medico</label>
+            <select id="doctorId" [(ngModel)]="form.doctorId" name="doctorId" class="form-control">
+              <option value="">Seleziona medico</option>
+              @for (doctor of doctors; track doctor.id) {
+                <option [value]="doctor.id">{{ doctor.name }} - {{ doctor.specialty || 'Generale' }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="illnessId"><i class="fas fa-user-injured"></i> Malattia</label>
+            <select id="illnessId" [(ngModel)]="form.illnessId" name="illnessId" class="form-control">
+              <option value="">Nessuna</option>
+              @for (illness of illnesses; track illness.id) {
+                <option [value]="illness.id">{{ illness.name }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="startDate"><i class="fas fa-calendar-start"></i> Data Inizio *</label>
+            <input type="date" id="startDate" [(ngModel)]="form.startDate" name="startDate" required class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="endDate"><i class="fas fa-calendar-end"></i> Data Fine</label>
+            <input type="date" id="endDate" [(ngModel)]="form.endDate" name="endDate" class="form-control">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="notes"><i class="fas fa-sticky-note"></i> Note</label>
+          <textarea id="notes" [(ngModel)]="form.notes" name="notes" rows="3" class="form-control" placeholder="Note aggiuntive..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" (click)="cancel()" class="btn btn-secondary">Annulla</button>
+          @if (isEdit) {
+            <button type="button" (click)="delete()" class="btn btn-danger"><i class="fas fa-trash"></i> Elimina</button>
           }
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Notes</label>
-        <textarea [(ngModel)]="form.notes" name="notes" rows="4" class="form-control"></textarea>
-      </div>
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary" [disabled]="saving">{{ saving ? 'Saving...' : (isEdit ? 'Save Changes' : 'Create') }}</button>
-        <button type="button" (click)="cancel()" class="btn btn-secondary">Cancel</button>
-        @if (isEdit) { <button type="button" (click)="delete()" class="btn btn-danger">Delete</button> }
-      </div>
-    </form>
+          <button type="submit" class="btn btn-primary" [disabled]="saving || !form.medication || !form.startDate">
+            <i class="fas fa-save"></i> {{ saving ? 'Salvataggio...' : 'Salva' }}
+          </button>
+        </div>
+      </form>
+    </div>
   `,
   styles: [`
-    .header { margin-bottom: 1.5rem; }
-    .form { max-width: 600px; }
+    .page-container { max-width: 800px; margin: 0 auto; padding: 2rem; }
+    .page-header h1 { color: var(--primary-color); display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem; }
+    .prescription-form { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
     .form-group { margin-bottom: 1rem; }
-    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
-    .form-control { width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 1rem; }
-    .form-actions { display: flex; gap: 1rem; margin-top: 1.5rem; }
-    .btn { padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 500; cursor: pointer; border: none; }
-    .btn-primary { background: #2563eb; color: white; }
-    .btn-secondary { background: #e2e8f0; color: #1e293b; }
-    .btn-danger { background: #dc2626; color: white; margin-left: auto; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-secondary); }
+    .form-group label i { margin-right: 0.5rem; color: var(--primary-color); }
+    .form-control { width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; }
+    .form-control:focus { outline: none; border-color: var(--primary-color); }
+    .form-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border-color); }
+    .btn { padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s; }
+    .btn-primary { background: var(--primary-color); color: white; }
+    .btn-primary:hover:not(:disabled) { background: var(--primary-dark); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-secondary { background: var(--bg-tertiary); color: var(--text-secondary); }
+    .btn-secondary:hover { background: var(--border-color); }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-danger:hover { background: #dc2626; }
   `]
 })
 export class PrescriptionFormComponent implements OnInit {
-  private prescriptionService = inject(PrescriptionService);
-  private illnessService = inject(IllnessService);
+  private healthService = inject(HealthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  isEdit = false; saving = false; id = '';
+  isEdit = false;
+  saving = false;
+  id = '';
   illnesses: Illness[] = [];
+  doctors: Doctor[] = [];
   
-  form: PrescriptionInput = { medication: '', dosage: '', frequency: '', startDate: '', notes: '', illnessId: '' };
+  form = {
+    medication: '',
+    dosage: '',
+    frequency: '',
+    startDate: '',
+    endDate: '',
+    notes: '',
+    illnessId: '',
+    doctorId: ''
+  };
 
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id') || '';
-    this.illnessService.getIllnesses().subscribe(res => this.illnesses = res.illnesses);
-    if (this.id) { this.isEdit = true; this.loadPrescription(); }
+    
+    this.healthService.getIllnesses().subscribe(res => this.illnesses = res.illnesses);
+    this.healthService.getDoctors().subscribe(res => this.doctors = res.doctors);
+    
+    if (this.id) {
+      this.isEdit = true;
+      this.loadPrescription();
+    }
   }
 
   loadPrescription() {
-    this.prescriptionService.getPrescription(this.id).subscribe(p => {
-      this.form = { medication: p.medication, dosage: p.dosage || '', frequency: p.frequency || '', startDate: p.startDate, endDate: p.endDate || '', notes: p.notes || '', illnessId: p.illnessId || '' };
+    this.healthService.getPrescription(this.id).subscribe(p => {
+      this.form = {
+        medication: p.medication,
+        dosage: p.dosage || '',
+        frequency: p.frequency || '',
+        startDate: p.startDate,
+        endDate: p.endDate || '',
+        notes: p.notes || '',
+        illnessId: p.illnessId || '',
+        doctorId: (p as any).doctorId || ''
+      };
     });
   }
 
   onSubmit() {
     if (!this.form.medication || !this.form.startDate) return;
     this.saving = true;
-    const obs = this.isEdit ? this.prescriptionService.updatePrescription(this.id, this.form) : this.prescriptionService.createPrescription(this.form);
-    obs.subscribe({ next: () => this.router.navigate(['/prescriptions']), error: () => this.saving = false });
+    
+    const data = {
+      ...this.form,
+      illnessId: this.form.illnessId || undefined,
+      doctorId: this.form.doctorId || undefined
+    };
+    
+    const obs = this.isEdit 
+      ? this.healthService.updatePrescription(this.id, data)
+      : this.healthService.createPrescription(data);
+    
+    obs.subscribe({
+      next: () => this.router.navigate(['/prescriptions']),
+      error: () => this.saving = false
+    });
   }
 
-  cancel() { this.router.navigate(['/prescriptions']); }
+  cancel() {
+    this.router.navigate(['/prescriptions']);
+  }
 
   delete() {
-    if (confirm('Delete this prescription?')) {
-      this.prescriptionService.deletePrescription(this.id).subscribe(() => this.router.navigate(['/prescriptions']));
+    if (confirm('Sei sicuro di voler eliminare questa prescrizione?')) {
+      this.healthService.deletePrescription(this.id).subscribe(() => this.router.navigate(['/prescriptions']));
     }
   }
 }

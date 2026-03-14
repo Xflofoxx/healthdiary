@@ -220,7 +220,7 @@ export class RegisterComponent {
         next: () => {
           this.success = true;
           setTimeout(() => {
-            this.router.navigate(['/illnesses']);
+            this.router.navigate(['/dashboard']);
           }, 1500);
         },
         error: (err) => {
@@ -228,8 +228,10 @@ export class RegisterComponent {
           this.loading = false;
         }
       });
-    } catch (err) {
-      this.error = 'WebAuthn error. Please use a supported browser.';
+    } catch (err: unknown) {
+      console.error('WebAuthn error:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      this.error = `WebAuthn error: ${errorMessage}`;
       this.loading = false;
     }
   }

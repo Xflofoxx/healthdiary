@@ -7,6 +7,7 @@ export interface Prescription {
   endDate: string | null;
   notes: string | null;
   illnessId: string | null;
+  doctorId: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -19,4 +20,5 @@ export interface PrescriptionInput {
   endDate?: string;
   notes?: string;
   illnessId?: string;
+  doctorId?: string;
 }

@@ -11,12 +11,13 @@ prescriptionsRouter.use('*', requireAuth);
 
 prescriptionsRouter.get('/', (c) => {
   const db = getDb();
-  const { search, illnessId, active } = c.req.query();
+  const { search, illnessId, active, doctorId } = c.req.query();
 
   let sql = `
-    SELECT p.*, i.name as illness_name 
+    SELECT p.*, i.name as illness_name, d.name as doctor_name, d.specialty as doctor_specialty
     FROM prescriptions p 
     LEFT JOIN illnesses i ON p.illness_id = i.id
+    LEFT JOIN doctors d ON p.doctor_id = d.id
   `;
   const params: unknown[] = [];
   const conditions: string[] = [];
@@ -31,6 +32,11 @@ prescriptionsRouter.get('/', (c) => {
     params.push(illnessId);
   }
 
+  if (doctorId) {
+    conditions.push('p.doctor_id = ?');
+    params.push(doctorId);
+  }
+
   if (active === 'true') {
     conditions.push("(p.end_date IS NULL OR p.end_date >= date('now'))");
   }
@@ -41,7 +47,11 @@ prescriptionsRouter.get('/', (c) => {
 
   sql += ' ORDER BY p.start_date DESC';
 
-  const rows = db.prepare(sql).all(...params) as (Prescription & { illness_name: string })[];
+  const rows = db.prepare(sql).all(...params) as (Prescription & {
+    illness_name: string;
+    doctor_name: string;
+    doctor_specialty: string;
+  })[];
 
   const prescriptions = rows.map((row) => ({
     id: row.id,
@@ -53,6 +63,9 @@ prescriptionsRouter.get('/', (c) => {
     notes: row.notes,
     illnessId: row.illnessId,
     illnessName: row.illness_name,
+    doctorId: row.doctorId,
+    doctorName: row.doctor_name,
+    doctorSpecialty: row.doctor_specialty,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   }));
@@ -66,12 +79,15 @@ prescriptionsRouter.get('/:id', (c) => {
 
   const row = db
     .prepare(`
-    SELECT p.*, i.name as illness_name 
+    SELECT p.*, i.name as illness_name, d.name as doctor_name, d.specialty as doctor_specialty
     FROM prescriptions p 
     LEFT JOIN illnesses i ON p.illness_id = i.id
+    LEFT JOIN doctors d ON p.doctor_id = d.id
     WHERE p.id = ?
   `)
-    .get(id) as (Prescription & { illness_name: string }) | undefined;
+    .get(id) as
+    | (Prescription & { illness_name: string; doctor_name: string; doctor_specialty: string })
+    | undefined;
 
   if (!row) {
     return c.json({ error: 'Prescription not found' }, 404);
@@ -87,6 +103,9 @@ prescriptionsRouter.get('/:id', (c) => {
     notes: row.notes,
     illnessId: row.illnessId,
     illnessName: row.illness_name,
+    doctorId: row.doctorId,
+    doctorName: row.doctor_name,
+    doctorSpecialty: row.doctor_specialty,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   });
@@ -107,14 +126,22 @@ prescriptionsRouter.post('/', async (c) => {
     }
   }
 
+  if (body.doctorId) {
+    const db = getDb();
+    const doctor = db.prepare('SELECT id FROM doctors WHERE id = ?').get(body.doctorId);
+    if (!doctor) {
+      return c.json({ error: 'Doctor not found' }, 400);
+    }
+  }
+
   const id = uuid();
   const now = new Date().toISOString();
 
   const db = getDb();
 
   db.prepare(`
-    INSERT INTO prescriptions (id, medication, dosage, frequency, start_date, end_date, notes, illness_id, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO prescriptions (id, medication, dosage, frequency, start_date, end_date, notes, illness_id, doctor_id, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     id,
     body.medication,
@@ -124,6 +151,7 @@ prescriptionsRouter.post('/', async (c) => {
     body.endDate || null,
     body.notes || null,
     body.illnessId || null,
+    body.doctorId || null,
     now,
     now
   );
@@ -137,6 +165,7 @@ prescriptionsRouter.post('/', async (c) => {
     endDate: body.endDate || null,
     notes: body.notes || null,
     illnessId: body.illnessId || null,
+    doctorId: body.doctorId || null,
     createdAt: now,
     updatedAt: now,
   };
@@ -158,10 +187,17 @@ prescriptionsRouter.put('/:id', async (c) => {
     return c.json({ error: 'Prescription not found' }, 404);
   }
 
-  if (body.illnessId) {
+  if (body.illnessId !== undefined && body.illnessId !== null) {
     const illness = db.prepare('SELECT id FROM illnesses WHERE id = ?').get(body.illnessId);
     if (!illness) {
       return c.json({ error: 'Illness not found' }, 400);
+    }
+  }
+
+  if (body.doctorId !== undefined && body.doctorId !== null) {
+    const doctor = db.prepare('SELECT id FROM doctors WHERE id = ?').get(body.doctorId);
+    if (!doctor) {
+      return c.json({ error: 'Doctor not found' }, 400);
     }
   }
 
@@ -174,12 +210,14 @@ prescriptionsRouter.put('/:id', async (c) => {
   const notes = body.notes !== undefined ? body.notes : (existing as Prescription).notes;
   const illnessId =
     body.illnessId !== undefined ? body.illnessId : (existing as Prescription).illnessId;
+  const doctorId =
+    body.doctorId !== undefined ? body.doctorId : (existing as Prescription).doctorId;
 
   db.prepare(`
     UPDATE prescriptions 
-    SET medication = ?, dosage = ?, frequency = ?, start_date = ?, end_date = ?, notes = ?, illness_id = ?, updated_at = ?
+    SET medication = ?, dosage = ?, frequency = ?, start_date = ?, end_date = ?, notes = ?, illness_id = ?, doctor_id = ?, updated_at = ?
     WHERE id = ?
-  `).run(medication, dosage, frequency, startDate, endDate, notes, illnessId, now, id);
+  `).run(medication, dosage, frequency, startDate, endDate, notes, illnessId, doctorId, now, id);
 
   const prescription = {
     id,
@@ -190,6 +228,7 @@ prescriptionsRouter.put('/:id', async (c) => {
     endDate,
     notes,
     illnessId,
+    doctorId,
     createdAt: (existing as Prescription).createdAt,
     updatedAt: now,
   };

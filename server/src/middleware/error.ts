@@ -4,10 +4,15 @@ import type { ErrorMessage } from './types';
 export const errorHandler: MiddlewareHandler = async (c, err) => {
   console.error('Error:', err);
 
+  const status = c.res?.status || 500;
+
   const errorMessage: ErrorMessage = {
     error: err.message || 'Internal Server Error',
-    status: c.res.status || 500,
+    status,
   };
 
-  return c.json(errorMessage, errorMessage.status);
+  return new Response(JSON.stringify(errorMessage), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  });
 };

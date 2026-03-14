@@ -15,6 +15,11 @@ export const routes: Routes = [
     loadComponent: () => import('./components/register/register.component').then(m => m.RegisterComponent) 
   },
   {
+    path: 'dashboard',
+    loadComponent: () => import('./components/dashboard/dashboard.component').then(m => m.DashboardComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'illnesses',
     loadComponent: () => import('./components/illness-list/illness-list.component').then(m => m.IllnessListComponent),
     canActivate: [authGuard]
@@ -57,6 +62,26 @@ export const routes: Routes = [
   {
     path: 'appointments/:id',
     loadComponent: () => import('./components/appointment-form/appointment-form.component').then(m => m.AppointmentFormComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'doctors',
+    loadComponent: () => import('./components/doctor-list/doctor-list.component').then(m => m.DoctorListComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'doctors/new',
+    loadComponent: () => import('./components/doctor-form/doctor-form.component').then(m => m.DoctorFormComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'doctors/:id',
+    loadComponent: () => import('./components/doctor-form/doctor-form.component').then(m => m.DoctorFormComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'calendar',
+    loadComponent: () => import('./components/calendar/calendar.component').then(m => m.CalendarComponent),
     canActivate: [authGuard]
   }
 ];

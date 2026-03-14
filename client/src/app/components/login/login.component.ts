@@ -1,4 +1,6 @@
 import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { startAuthentication } from '@simplewebauthn/browser';
@@ -6,7 +8,7 @@ import { startAuthentication } from '@simplewebauthn/browser';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   template: `
     <div class="auth-page">
       <div class="auth-container">
@@ -34,6 +36,37 @@ import { startAuthentication } from '@simplewebauthn/browser';
           <i class="fas fa-info-circle"></i>
           Use Windows Hello, Touch ID, or your security key to authenticate
         </p>
+
+        <div class="divider">
+          <span>or</span>
+        </div>
+
+        <div class="demo-login">
+          <h3>Quick Login</h3>
+          <div class="form-group">
+            <input 
+              type="text" 
+              [(ngModel)]="demoUsername" 
+              placeholder="Username"
+              class="form-control"
+            >
+          </div>
+          <div class="form-group">
+            <input 
+              type="password" 
+              [(ngModel)]="demoPassword" 
+              placeholder="Password"
+              class="form-control"
+            >
+          </div>
+          <button (click)="demoLogin()" class="btn btn-secondary btn-large" [disabled]="loadingDemo">
+            @if (loadingDemo) {
+              <i class="fas fa-spinner fa-spin"></i>
+            } @else {
+              <i class="fas fa-sign-in-alt"></i> Login with Password
+            }
+          </button>
+        </div>
         
         <p class="register-link">
           Don't have an account? 
@@ -109,6 +142,13 @@ import { startAuthentication } from '@simplewebauthn/browser';
     .btn-primary:hover:not(:disabled) {
       background: #5a67d8;
     }
+    .btn-secondary {
+      background: #48bb78;
+      color: white;
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: #38a169;
+    }
     .btn:disabled {
       opacity: 0.7;
       cursor: not-allowed;
@@ -121,6 +161,47 @@ import { startAuthentication } from '@simplewebauthn/browser';
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
+    }
+    .divider {
+      margin: 1.5rem 0;
+      display: flex;
+      align-items: center;
+      color: #a0aec0;
+    }
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e2e8f0;
+    }
+    .divider span {
+      padding: 0 1rem;
+    }
+    .demo-login {
+      background: #f7fafc;
+      padding: 1.5rem;
+      border-radius: 12px;
+    }
+    .demo-login h3 {
+      font-size: 1rem;
+      color: #4a5568;
+      margin-bottom: 1rem;
+    }
+    .form-group {
+      margin-bottom: 0.75rem;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: #667eea;
     }
     .register-link {
       margin-top: 2rem;
@@ -137,7 +218,10 @@ export class LoginComponent {
   private router = inject(Router);
   
   loading = false;
+  loadingDemo = false;
   error = '';
+  demoUsername = '';
+  demoPassword = '';
 
   async login() {
     this.loading = true;
@@ -158,7 +242,7 @@ export class LoginComponent {
       
       this.authService.loginVerify({ response: attestation }).subscribe({
         next: () => {
-          this.router.navigate(['/illnesses']);
+          this.router.navigate(['/dashboard']);
         },
         error: (err) => {
           this.error = 'Authentication failed. Please try again.';
@@ -169,5 +253,29 @@ export class LoginComponent {
       this.error = 'WebAuthn error. Please use a supported browser.';
       this.loading = false;
     }
+  }
+
+  demoLogin() {
+    if (!this.demoUsername || !this.demoPassword) {
+      this.error = 'Please enter username and password';
+      return;
+    }
+
+    this.loadingDemo = true;
+    this.error = '';
+
+    this.authService.demoLogin(this.demoUsername, this.demoPassword).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.authService.checkAuth();
+          this.router.navigate(['/dashboard']);
+        }
+        this.loadingDemo = false;
+      },
+      error: (err) => {
+        this.error = 'Invalid credentials';
+        this.loadingDemo = false;
+      }
+    });
   }
 }

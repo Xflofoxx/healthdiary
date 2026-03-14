@@ -1,0 +1,26 @@
+server:
+  host: "0.0.0.0"
+  port: 3000
+  cors:
+    origin: "http://localhost:4200"
+    credentials: true
+
+database:
+  sqlite:
+    pathdata/healthdiary: "./.db"
+  duckdb:
+    path: "./data/analytics.duckdb"
+
+webauthn:
+  rpId: "localhost"
+  rpName: "Healthdiary"
+  origin: "http://localhost:4200"
+
+demo:
+  username: "demo"
+  password: "demo"
+  displayName: "Demo User"
+
+client:
+  apiUrl: "http://localhost:3000"
+  title: "Healthdiary"

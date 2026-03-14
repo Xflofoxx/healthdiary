@@ -1,17 +1,27 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
+import { loadConfig } from './config';
 import { requireAuth } from './middleware/auth';
 import { errorHandler } from './middleware/error';
 import appointmentsRouter from './routes/appointments';
 import authRouter from './routes/auth';
+import doctorsRouter from './routes/doctors';
 import healthRouter from './routes/health';
 import illnessesRouter from './routes/illnesses';
 import prescriptionsRouter from './routes/prescriptions';
 import { logger } from './utils/logger';
 
+const config = loadConfig();
+
 const app = new Hono();
 
-app.use('*', cors());
+app.use(
+  '*',
+  cors({
+    origin: config.server.cors.origin,
+    credentials: config.server.cors.credentials,
+  })
+);
 app.use('*', logger);
 
 app.get('/', (c) => {
@@ -85,6 +95,7 @@ app.get('/', (c) => {
 });
 
 app.route('/api/v1/auth', authRouter);
+app.route('/api/v1/doctors', doctorsRouter);
 app.route('/api/v1/illnesses', illnessesRouter);
 app.route('/api/v1/prescriptions', prescriptionsRouter);
 app.route('/api/v1/appointments', appointmentsRouter);

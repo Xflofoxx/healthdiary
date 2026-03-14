@@ -46,12 +46,15 @@ function runSqliteMigrations(): void {
       end_date TEXT,
       notes TEXT,
       illness_id TEXT,
+      doctor_id TEXT,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP,
       updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (illness_id) REFERENCES illnesses(id) ON DELETE SET NULL
+      FOREIGN KEY (illness_id) REFERENCES illnesses(id) ON DELETE SET NULL,
+      FOREIGN KEY (doctor_id) REFERENCES doctors(id) ON DELETE SET NULL
     );
 
     CREATE INDEX IF NOT EXISTS idx_prescriptions_illness ON prescriptions(illness_id);
+    CREATE INDEX IF NOT EXISTS idx_prescriptions_doctor ON prescriptions(doctor_id);
     CREATE INDEX IF NOT EXISTS idx_prescriptions_start_date ON prescriptions(start_date);
 
     CREATE TABLE IF NOT EXISTS appointments (
@@ -104,6 +107,20 @@ function runSqliteMigrations(): void {
       user_data TEXT,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
+
+    CREATE TABLE IF NOT EXISTS doctors (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      specialty TEXT,
+      phone TEXT,
+      email TEXT,
+      address TEXT,
+      notes TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_doctors_name ON doctors(name);
   `);
 }
 
