@@ -8,6 +8,7 @@ export interface Prescription {
   notes: string | null;
   illnessId: string | null;
   illnessName: string | null;
+  doctorName: string | null;
   createdAt: string;
   updatedAt: string;
 }

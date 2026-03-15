@@ -129,6 +129,25 @@ import { AuthService } from '../../services/auth.service';
               </div>
             }
           </div>
+
+          <div class="data-section danger-zone">
+            <h3><i class="fas fa-trash-alt"></i> Resetta Database</h3>
+            <p class="danger-warning">⚠️ Attenzione: questa azione eliminerà tutti i tuoi dati in modo permanente. Inserisci "RESET" per confermare.</p>
+            <input type="text" 
+                   [(ngModel)]="resetConfirm" 
+                   name="resetConfirm" 
+                   placeholder='Scrivi "RESET" per confermare'
+                   class="reset-input">
+            <button (click)="resetDatabase()" 
+                    class="btn-danger" 
+                    [disabled]="resetting || resetConfirm !== 'RESET'">
+              <i class="fas" [class.fa-trash]="!resetting" [class.fa-spinner]="resetting" [class.fa-spin]="resetting"></i>
+              {{ resetting ? 'Resettazione...' : 'Resetta Database' }}
+            </button>
+            @if (resetSuccess) {
+              <span class="success-message"><i class="fas fa-check-circle"></i> Database resettato!</span>
+            }
+          </div>
         </section>
 
         <section class="card">
@@ -184,6 +203,13 @@ import { AuthService } from '../../services/auth.service';
     input[type="file"] { margin: 0.5rem 0; }
     .file-preview { background: #f7fafc; padding: 0.75rem; border-radius: 8px; margin: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); }
     .import-result { background: #d1fae5; color: #059669; padding: 0.75rem; border-radius: 8px; margin-top: 1rem; font-weight: 500; }
+    .danger-zone { border: 2px solid #fee2e2; border-radius: 8px; padding: 1rem; margin-top: 1rem; background: #fef2f2; }
+    .danger-zone h3 { color: #dc2626 !important; }
+    .danger-warning { color: #dc2626; font-size: 0.9rem; margin-bottom: 1rem; }
+    .reset-input { width: 100%; padding: 0.625rem 0.875rem; border: 2px solid #fecaca !important; border-radius: 8px; font-size: 0.95rem; margin-bottom: 0.75rem; }
+    .reset-input:focus { outline: none; border-color: #dc2626 !important; box-shadow: 0 0 0 3px rgba(220,38,38,0.15); }
+    .btn-danger { background: #dc2626; color: white; }
+    .btn-danger:hover:not(:disabled) { background: #b91c1c; }
     .info-list { display: flex; flex-direction: column; gap: 0.75rem; }
     .info-item { display: flex; justify-content: space-between; }
     .info-label { color: var(--text-muted); }
@@ -216,6 +242,9 @@ export class SettingsComponent implements OnInit {
   exporting = false;
   importing = false;
   generating = false;
+  resetting = false;
+  resetConfirm = '';
+  resetSuccess = false;
   importFile: File | null = null;
   importResult: any = null;
 
@@ -332,6 +361,30 @@ export class SettingsComponent implements OnInit {
       },
       error: () => {
         this.generating = false;
+      }
+    });
+  }
+
+  resetDatabase() {
+    if (this.resetConfirm !== 'RESET') return;
+    
+    if (!confirm('Sei sicuro di voler eliminare tutti i tuoi dati? Questa azione è irreversibile!')) {
+      return;
+    }
+
+    this.resetting = true;
+    this.healthService.resetDatabase(this.resetConfirm).subscribe({
+      next: () => {
+        this.resetting = false;
+        this.resetSuccess = true;
+        this.resetConfirm = '';
+        setTimeout(() => {
+          this.resetSuccess = false;
+          window.location.href = '/';
+        }, 2000);
+      },
+      error: () => {
+        this.resetting = false;
       }
     });
   }

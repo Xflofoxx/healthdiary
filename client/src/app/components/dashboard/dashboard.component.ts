@@ -60,6 +60,28 @@ import { HealthService } from '../../services/health.service';
         </div>
       </div>
 
+      <section class="quick-actions">
+        <h2><i class="fas fa-bolt"></i> Azioni Rapide</h2>
+        <div class="actions-grid">
+          <a routerLink="/illnesses/new" class="action-btn">
+            <i class="fas fa-user-injured"></i>
+            <span>Nuova Malattia</span>
+          </a>
+          <a routerLink="/prescriptions/new" class="action-btn">
+            <i class="fas fa-prescription"></i>
+            <span>Nuova Prescrizione</span>
+          </a>
+          <a routerLink="/appointments/new" class="action-btn">
+            <i class="fas fa-calendar-plus"></i>
+            <span>Nuovo Appuntamento</span>
+          </a>
+          <a routerLink="/settings" class="action-btn">
+            <i class="fas fa-cog"></i>
+            <span>Impostazioni</span>
+          </a>
+        </div>
+      </section>
+
       <div class="dashboard-grid">
         <section class="card chart-card">
           <h2><i class="fas fa-chart-pie"></i> Stato Malattie</h2>
@@ -178,28 +200,6 @@ import { HealthService } from '../../services/health.service';
           </a>
         </section>
       </div>
-
-      <section class="quick-actions">
-        <h2><i class="fas fa-bolt"></i> Azioni Rapide</h2>
-        <div class="actions-grid">
-          <a routerLink="/illnesses/new" class="action-btn">
-            <i class="fas fa-user-injured"></i>
-            <span>Nuova Malattia</span>
-          </a>
-          <a routerLink="/prescriptions/new" class="action-btn">
-            <i class="fas fa-prescription"></i>
-            <span>Nuova Prescrizione</span>
-          </a>
-          <a routerLink="/appointments/new" class="action-btn">
-            <i class="fas fa-calendar-plus"></i>
-            <span>Nuovo Appuntamento</span>
-          </a>
-          <a routerLink="/settings" class="action-btn">
-            <i class="fas fa-cog"></i>
-            <span>Impostazioni</span>
-          </a>
-        </div>
-      </section>
     </div>
   `,
   styles: [`

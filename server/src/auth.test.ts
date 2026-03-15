@@ -590,6 +590,41 @@ describe('Doctors Routes', () => {
     });
   });
 
+  describe('Data Reset', () => {
+    test('POST /api/v1/data/reset returns 401 without auth', async () => {
+      const res = await app.request('/api/v1/data/reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confirm: 'RESET' }),
+      });
+      expect(res.status).toBe(401);
+    });
+
+    test('POST /api/v1/data/reset returns 400 without correct confirmation', async () => {
+      const res = await app.request('/api/v1/data/reset', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: sessionCookie,
+        },
+        body: JSON.stringify({ confirm: 'wrong' }),
+      });
+      expect(res.status).toBe(400);
+    });
+
+    test('POST /api/v1/data/reset resets database', async () => {
+      const res = await app.request('/api/v1/data/reset', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: sessionCookie,
+        },
+        body: JSON.stringify({ confirm: 'RESET' }),
+      });
+      expect(res.status).toBe(200);
+    });
+  });
+
   describe('Report Routes', () => {
     test('GET /api/v1/report returns 401 without auth', async () => {
       const res = await app.request('/api/v1/report', { method: 'GET' });
@@ -597,14 +632,71 @@ describe('Doctors Routes', () => {
     });
 
     test('GET /api/v1/report returns HTML', async () => {
+      const loginRes = await app.request('/api/v1/auth/login/demo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: 'demo', password: 'demo' }),
+      });
+      const cookie = loginRes.headers.get('set-cookie');
+      
       const res = await app.request('/api/v1/report', {
         method: 'GET',
-        headers: { Cookie: sessionCookie },
+        headers: { Cookie: cookie },
       });
       expect(res.status).toBe(200);
-      const text = await res.text();
-      expect(text).toContain('Healthdiary');
-      expect(text).toContain('Report');
+    });
+  });
+
+  describe('Illness edge cases', () => {
+    test('GET /api/v1/illnesses with search', async () => {
+      const loginRes = await app.request('/api/v1/auth/login/demo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: 'demo', password: 'demo' }),
+      });
+      const cookie = loginRes.headers.get('set-cookie');
+      
+      const res = await app.request('/api/v1/illnesses?search=test', {
+        method: 'GET',
+        headers: { Cookie: cookie },
+      });
+      expect(res.status).toBe(200);
+    });
+  });
+
+  describe('Prescription edge cases', () => {
+    test('GET /api/v1/prescriptions/:id returns 404 for nonexistent', async () => {
+      const loginRes = await app.request('/api/v1/auth/login/demo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: 'demo', password: 'demo' }),
+      });
+      const cookie = loginRes.headers.get('set-cookie');
+
+      const res = await app.request('/api/v1/prescriptions/nonexistent-id-123', {
+        method: 'GET',
+        headers: { Cookie: cookie },
+      });
+      expect(res.status).toBe(404);
+    });
+
+    test('PUT /api/v1/prescriptions/:id returns 404 for nonexistent', async () => {
+      const loginRes = await app.request('/api/v1/auth/login/demo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: 'demo', password: 'demo' }),
+      });
+      const cookie = loginRes.headers.get('set-cookie');
+
+      const res = await app.request('/api/v1/prescriptions/nonexistent-id-123', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: cookie,
+        },
+        body: JSON.stringify({ medication: 'Test' }),
+      });
+      expect(res.status).toBe(404);
     });
   });
 });

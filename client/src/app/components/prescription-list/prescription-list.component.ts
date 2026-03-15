@@ -69,9 +69,9 @@ import { Prescription } from '../../models/prescription.model';
                     <i class="fas fa-user-injured"></i> {{ rx.illnessName }}
                   </div>
                 }
-                @if ((rx as any).doctorName) {
+                @if (rx.doctorName) {
                   <div class="linked-item">
-                    <i class="fas fa-user-md"></i> {{ (rx as any).doctorName }}
+                    <i class="fas fa-user-md"></i> {{ rx.doctorName }}
                   </div>
                 }
                 <div class="card-dates">

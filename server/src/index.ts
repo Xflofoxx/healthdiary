@@ -13,6 +13,9 @@ import prescriptionsRouter from './routes/prescriptions';
 import profileRouter from './routes/profile';
 import reportRouter from './routes/report';
 import { logger } from './utils/logger';
+import { runMigrations } from './db/migrate';
+
+runMigrations();
 
 const config = loadConfig();
 

@@ -141,4 +141,25 @@ dataRouter.post('/import', requireAuth, async (c) => {
   return c.json({ success: true, imported });
 });
 
+dataRouter.post('/reset', requireAuth, async (c) => {
+  const userId = c.get('userId');
+  const db = getDb();
+
+  const body = await c.req.json();
+  const { confirm } = body;
+
+  if (confirm !== 'RESET') {
+    return c.json({ error: 'Per resettare il database, scrivi "RESET" nel campo di conferma' }, 400);
+  }
+
+  db.prepare('DELETE FROM illnesses WHERE 1=1').run();
+  db.prepare('DELETE FROM prescriptions WHERE 1=1').run();
+  db.prepare('DELETE FROM appointments WHERE 1=1').run();
+  db.prepare('DELETE FROM doctors WHERE 1=1').run();
+  db.prepare('DELETE FROM user_profiles WHERE user_id = ?').run(userId);
+  db.prepare('DELETE FROM sessions WHERE user_id = ?').run(userId);
+
+  return c.json({ success: true, message: 'Database resettato con successo' });
+});
+
 export default dataRouter;

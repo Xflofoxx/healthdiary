@@ -176,4 +176,9 @@ export class HealthService {
   getReport(): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/report`, { withCredentials: true, responseType: 'blob' });
   }
+
+  // Reset database
+  resetDatabase(confirm: string): Observable<{ success: boolean; message: string }> {
+    return this.http.post<{ success: boolean; message: string }>(`${this.apiUrl}/data/reset`, { confirm }, { withCredentials: true });
+  }
 }
