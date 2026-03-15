@@ -188,7 +188,8 @@ export class SidebarComponent {
   navItems: NavItem[] = [
     { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
     { label: 'Malattie', icon: 'medical_services', route: '/illnesses' },
-    { label: 'Farmaci', icon: 'medication', route: '/prescriptions' },
+    { label: 'Prescrizioni', icon: 'medication', route: '/prescriptions' },
+    { label: 'Database Farmaci', icon: 'search', route: '/medications' },
     { label: 'Visite', icon: 'event', route: '/appointments' },
     { label: 'Medici', icon: 'person', route: '/doctors' },
     { label: 'Calendario', icon: 'calendar_month', route: '/calendar' },

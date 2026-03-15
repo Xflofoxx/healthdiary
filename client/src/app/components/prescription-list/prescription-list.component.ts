@@ -13,7 +13,7 @@ import { Prescription } from '../../models/prescription.model';
     <div class="page-container">
       <header class="page-header">
         <div class="header-content">
-          <h1><i class="fas fa-pills"></i> Farmaci</h1>
+          <h1><i class="fas fa-pills"></i> Prescrizioni</h1>
           <p>Gestisci le tue prescrizioni mediche</p>
         </div>
         <a routerLink="/prescriptions/new" class="btn btn-primary">
