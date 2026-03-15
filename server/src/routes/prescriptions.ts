@@ -53,21 +53,21 @@ prescriptionsRouter.get('/', (c) => {
     doctor_specialty: string;
   })[];
 
-  const prescriptions = rows.map((row) => ({
+  const prescriptions = rows.map((row: any) => ({
     id: row.id,
     medication: row.medication,
     dosage: row.dosage,
     frequency: row.frequency,
-    startDate: row.startDate,
-    endDate: row.endDate,
+    startDate: row.start_date,
+    endDate: row.end_date,
     notes: row.notes,
-    illnessId: row.illnessId,
+    illnessId: row.illness_id,
     illnessName: row.illness_name,
-    doctorId: row.doctorId,
+    doctorId: row.doctor_id,
     doctorName: row.doctor_name,
     doctorSpecialty: row.doctor_specialty,
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   }));
 
   return c.json({ prescriptions, total: prescriptions.length });
@@ -98,16 +98,16 @@ prescriptionsRouter.get('/:id', (c) => {
     medication: row.medication,
     dosage: row.dosage,
     frequency: row.frequency,
-    startDate: row.startDate,
-    endDate: row.endDate,
+    startDate: row.start_date,
+    endDate: row.end_date,
     notes: row.notes,
-    illnessId: row.illnessId,
+    illnessId: row.illness_id,
     illnessName: row.illness_name,
-    doctorId: row.doctorId,
+    doctorId: row.doctor_id,
     doctorName: row.doctor_name,
     doctorSpecialty: row.doctor_specialty,
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   });
 });
 

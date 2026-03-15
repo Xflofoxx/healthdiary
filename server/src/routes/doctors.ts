@@ -24,7 +24,7 @@ doctorsRouter.get('/', (c) => {
 
   const rows = db.prepare(sql).all(...params) as Doctor[];
 
-  const doctors = rows.map((row) => ({
+  const doctors = rows.map((row: any) => ({
     id: row.id,
     name: row.name,
     specialty: row.specialty,
@@ -32,8 +32,8 @@ doctorsRouter.get('/', (c) => {
     email: row.email,
     address: row.address,
     notes: row.notes,
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   }));
 
   return c.json({ doctors, total: doctors.length });
@@ -57,8 +57,8 @@ doctorsRouter.get('/:id', (c) => {
     email: row.email,
     address: row.address,
     notes: row.notes,
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   });
 });
 

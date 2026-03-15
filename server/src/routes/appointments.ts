@@ -49,18 +49,18 @@ appointmentsRouter.get('/', (c) => {
 
   const rows = db.prepare(sql).all(...params) as (Appointment & { illness_name: string })[];
 
-  const appointments = rows.map((row) => ({
+  const appointments = rows.map((row: any) => ({
     id: row.id,
-    doctorName: row.doctorName,
+    doctorName: row.doctor_name,
     specialty: row.specialty,
     date: row.date,
     time: row.time,
     location: row.location,
     notes: row.notes,
-    illnessId: row.illnessId,
+    illnessId: row.illness_id,
     illnessName: row.illness_name,
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   }));
 
   return c.json({ appointments, total: appointments.length });
@@ -85,16 +85,16 @@ appointmentsRouter.get('/:id', (c) => {
 
   return c.json({
     id: row.id,
-    doctorName: row.doctorName,
+    doctorName: row.doctor_name,
     specialty: row.specialty,
     date: row.date,
     time: row.time,
     location: row.location,
     notes: row.notes,
-    illnessId: row.illnessId,
+    illnessId: row.illness_id,
     illnessName: row.illness_name,
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   });
 });
 
