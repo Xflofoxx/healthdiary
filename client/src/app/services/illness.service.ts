@@ -1,33 +1,33 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Illness, IllnessInput } from '../models/illness.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class IllnessService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/v1/illnesses';
+  private apiUrl = `${environment.apiUrl}/api/v1/illnesses`;
 
-  getIllnesses(search?: string, status?: string): Observable<{ illnesses: Illness[]; total: number }> {
+  getIllnesses(search?: string, status?: string): Observable<{ illnesses: any[]; total: number }> {
     let params = new HttpParams();
     if (search) params = params.set('search', search);
     if (status) params = params.set('status', status);
-    return this.http.get<{ illnesses: Illness[]; total: number }>(this.apiUrl, { params });
+    return this.http.get<{ illnesses: any[]; total: number }>(this.apiUrl, { params, withCredentials: true });
   }
 
-  getIllness(id: string): Observable<Illness> {
-    return this.http.get<Illness>(`${this.apiUrl}/${id}`);
+  getIllness(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
-  createIllness(illness: IllnessInput): Observable<Illness> {
-    return this.http.post<Illness>(this.apiUrl, illness);
+  createIllness(illness: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, illness, { withCredentials: true });
   }
 
-  updateIllness(id: string, illness: IllnessInput): Observable<Illness> {
-    return this.http.put<Illness>(`${this.apiUrl}/${id}`, illness);
+  updateIllness(id: string, illness: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, illness, { withCredentials: true });
   }
 
   deleteIllness(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 }

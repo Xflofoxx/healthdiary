@@ -1,34 +1,34 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Prescription, PrescriptionInput } from '../models/prescription.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class PrescriptionService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/v1/prescriptions';
+  private apiUrl = `${environment.apiUrl}/api/v1/prescriptions`;
 
-  getPrescriptions(illnessId?: string, search?: string, active?: boolean): Observable<{ prescriptions: Prescription[]; total: number }> {
+  getPrescriptions(illnessId?: string, search?: string, active?: boolean): Observable<{ prescriptions: any[]; total: number }> {
     let params = new HttpParams();
     if (illnessId) params = params.set('illnessId', illnessId);
     if (search) params = params.set('search', search);
     if (active) params = params.set('active', 'true');
-    return this.http.get<{ prescriptions: Prescription[]; total: number }>(this.apiUrl, { params });
+    return this.http.get<{ prescriptions: any[]; total: number }>(this.apiUrl, { params, withCredentials: true });
   }
 
-  getPrescription(id: string): Observable<Prescription> {
-    return this.http.get<Prescription>(`${this.apiUrl}/${id}`);
+  getPrescription(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
-  createPrescription(prescription: PrescriptionInput): Observable<Prescription> {
-    return this.http.post<Prescription>(this.apiUrl, prescription);
+  createPrescription(prescription: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, prescription, { withCredentials: true });
   }
 
-  updatePrescription(id: string, prescription: PrescriptionInput): Observable<Prescription> {
-    return this.http.put<Prescription>(`${this.apiUrl}/${id}`, prescription);
+  updatePrescription(id: string, prescription: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, prescription, { withCredentials: true });
   }
 
   deletePrescription(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 }
