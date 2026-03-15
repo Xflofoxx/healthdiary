@@ -121,6 +121,24 @@ function runSqliteMigrations(): void {
     );
 
     CREATE INDEX IF NOT EXISTS idx_doctors_name ON doctors(name);
+
+    CREATE TABLE IF NOT EXISTS user_profiles (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL UNIQUE,
+      birth_date TEXT,
+      blood_type TEXT,
+      height REAL,
+      weight REAL,
+      allergies TEXT,
+      chronic_conditions TEXT,
+      emergency_contact_name TEXT,
+      emergency_contact_phone TEXT,
+      emergency_contact_relationship TEXT,
+      notes TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
   `);
 }
 

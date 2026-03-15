@@ -15,8 +15,8 @@ import { startRegistration } from '@simplewebauthn/browser';
         <div class="logo">
           <i class="fas fa-heartbeat"></i>
         </div>
-        <h1>Create Account</h1>
-        <p class="subtitle">Register with WebAuthn</p>
+        <h1>Crea Account</h1>
+        <p class="subtitle">Registrati con WebAuthn</p>
         
         @if (error) {
           <div class="error-message">
@@ -26,17 +26,17 @@ import { startRegistration } from '@simplewebauthn/browser';
         
         @if (success) {
           <div class="success-message">
-            <i class="fas fa-check-circle"></i> Account created! Redirecting...
+            <i class="fas fa-check-circle"></i> Account creato! Reindirizzamento...
           </div>
         }
         
         <div class="form-group">
-          <label for="displayName">Your Name</label>
+          <label for="displayName">Il tuo nome</label>
           <input 
             type="text" 
             id="displayName" 
             [(ngModel)]="displayName" 
-            placeholder="Enter your name"
+            placeholder="Inserisci il tuo nome"
             class="form-control"
             [disabled]="loading"
           >
@@ -44,20 +44,20 @@ import { startRegistration } from '@simplewebauthn/browser';
         
         <button (click)="register()" class="btn btn-primary btn-large" [disabled]="loading || !displayName">
           @if (loading) {
-            <i class="fas fa-spinner fa-spin"></i> Registering...
+            <i class="fas fa-spinner fa-spin"></i> Registrazione in corso...
           } @else {
-            <i class="fas fa-user-plus"></i> Register with WebAuthn
+            <i class="fas fa-user-plus"></i> Registrati con WebAuthn
           }
         </button>
         
         <p class="info">
           <i class="fas fa-info-circle"></i>
-          You'll be prompted to create a credential using Windows Hello, Touch ID, or a security key
+          Verrà richiesto di creare una credenziale usando Windows Hello, Touch ID o una chiave di sicurezza
         </p>
         
         <p class="login-link">
-          Already have an account? 
-          <a routerLink="/login">Login here</a>
+          Hai già un account? 
+          <a routerLink="/login">Accedi qui</a>
         </p>
       </div>
     </div>

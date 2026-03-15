@@ -5,10 +5,13 @@ import { requireAuth } from './middleware/auth';
 import { errorHandler } from './middleware/error';
 import appointmentsRouter from './routes/appointments';
 import authRouter from './routes/auth';
+import dataRouter from './routes/data';
 import doctorsRouter from './routes/doctors';
 import healthRouter from './routes/health';
 import illnessesRouter from './routes/illnesses';
 import prescriptionsRouter from './routes/prescriptions';
+import profileRouter from './routes/profile';
+import reportRouter from './routes/report';
 import { logger } from './utils/logger';
 
 const config = loadConfig();
@@ -99,6 +102,9 @@ app.route('/api/v1/doctors', doctorsRouter);
 app.route('/api/v1/illnesses', illnessesRouter);
 app.route('/api/v1/prescriptions', prescriptionsRouter);
 app.route('/api/v1/appointments', appointmentsRouter);
+app.route('/api/v1/profile', profileRouter);
+app.route('/api/v1/data', dataRouter);
+app.route('/api/v1/report', reportRouter);
 app.route('', healthRouter);
 
 app.onError(errorHandler);

@@ -44,6 +44,21 @@ export interface Doctor {
   notes: string | null;
 }
 
+export interface UserProfile {
+  id: string;
+  user_id: string;
+  birthDate: string | null;
+  bloodType: string | null;
+  height: number | null;
+  weight: number | null;
+  allergies: string | null;
+  chronicConditions: string | null;
+  emergencyContactName: string | null;
+  emergencyContactPhone: string | null;
+  emergencyContactRelationship: string | null;
+  notes: string | null;
+}
+
 export interface DashboardData {
   illnesses: Illness[];
   prescriptions: Prescription[];
@@ -137,5 +152,28 @@ export class HealthService {
 
   deleteDoctor(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/doctors/${id}`, { withCredentials: true });
+  }
+
+  // Profile
+  getProfile(): Observable<UserProfile> {
+    return this.http.get<UserProfile>(`${this.apiUrl}/profile`, { withCredentials: true });
+  }
+
+  updateProfile(data: Partial<UserProfile>): Observable<UserProfile> {
+    return this.http.put<UserProfile>(`${this.apiUrl}/profile`, data, { withCredentials: true });
+  }
+
+  // Data export/import
+  exportData(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/data/export`, { withCredentials: true, responseType: 'blob' });
+  }
+
+  importData(data: any): Observable<{ success: boolean; imported: any }> {
+    return this.http.post<{ success: boolean; imported: any }>(`${this.apiUrl}/data/import`, data, { withCredentials: true });
+  }
+
+  // Report
+  getReport(): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/report`, { withCredentials: true, responseType: 'blob' });
   }
 }

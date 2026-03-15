@@ -15,8 +15,8 @@ import { startAuthentication } from '@simplewebauthn/browser';
         <div class="logo">
           <i class="fas fa-heartbeat"></i>
         </div>
-        <h1>Welcome Back</h1>
-        <p class="subtitle">Login to your Healthdiary account</p>
+        <h1>Benvenuto</h1>
+        <p class="subtitle">Accedi al tuo account Healthdiary</p>
         
         @if (error) {
           <div class="error-message">
@@ -26,28 +26,28 @@ import { startAuthentication } from '@simplewebauthn/browser';
         
         <button (click)="login()" class="btn btn-primary btn-large" [disabled]="loading">
           @if (loading) {
-            <i class="fas fa-spinner fa-spin"></i> Verifying...
+            <i class="fas fa-spinner fa-spin"></i> Verifica in corso...
           } @else {
-            <i class="fas fa-fingerprint"></i> Login with WebAuthn
+            <i class="fas fa-fingerprint"></i> Accedi con WebAuthn
           }
         </button>
         
         <p class="info">
           <i class="fas fa-info-circle"></i>
-          Use Windows Hello, Touch ID, or your security key to authenticate
+          Usa Windows Hello, Touch ID o la tua chiave di sicurezza
         </p>
 
         <div class="divider">
-          <span>or</span>
+          <span>oppure</span>
         </div>
 
         <div class="demo-login">
-          <h3>Quick Login</h3>
+          <h3>Accesso rapido</h3>
           <div class="form-group">
             <input 
               type="text" 
               [(ngModel)]="demoUsername" 
-              placeholder="Username"
+              placeholder="Nome utente"
               class="form-control"
             >
           </div>
@@ -63,14 +63,14 @@ import { startAuthentication } from '@simplewebauthn/browser';
             @if (loadingDemo) {
               <i class="fas fa-spinner fa-spin"></i>
             } @else {
-              <i class="fas fa-sign-in-alt"></i> Login with Password
+              <i class="fas fa-sign-in-alt"></i> Accedi con Password
             }
           </button>
         </div>
         
         <p class="register-link">
-          Don't have an account? 
-          <a routerLink="/register">Register here</a>
+          Non hai un account? 
+          <a routerLink="/register">Registrati qui</a>
         </p>
       </div>
     </div>
@@ -136,18 +136,19 @@ import { startAuthentication } from '@simplewebauthn/browser';
       text-decoration: none;
     }
     .btn-primary {
-      background: #667eea;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
     }
     .btn-primary:hover:not(:disabled) {
-      background: #5a67d8;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102,126,234,0.4);
     }
     .btn-secondary {
-      background: #48bb78;
-      color: white;
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
     }
     .btn-secondary:hover:not(:disabled) {
-      background: #38a169;
+      background: var(--border-color);
     }
     .btn:disabled {
       opacity: 0.7;

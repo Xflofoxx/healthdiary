@@ -18,6 +18,7 @@ import { AuthService } from './services/auth.service';
             <a routerLink="/appointments" routerLinkActive="active"><i class="fas fa-calendar-check"></i> Visite</a>
             <a routerLink="/doctors" routerLinkActive="active"><i class="fas fa-user-md"></i> Medici</a>
             <a routerLink="/calendar" routerLinkActive="active"><i class="fas fa-calendar-alt"></i> Calendario</a>
+            <a routerLink="/settings" routerLinkActive="active"><i class="fas fa-cog"></i> Impostazioni</a>
             <button (click)="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Esci</button>
           </div>
         </div>

@@ -11,7 +11,10 @@ import { HealthService, Doctor, Illness } from '../../services/health.service';
   template: `
     <div class="page-container">
       <header class="page-header">
-        <h1><i class="fas fa-prescription"></i> {{ isEdit ? 'Modifica Farmaco' : 'Nuovo Farmaco' }}</h1>
+        <div class="header-content">
+          <h1><i class="fas fa-pills"></i> {{ isEdit ? 'Modifica Farmaco' : 'Nuovo Farmaco' }}</h1>
+          <p>{{ isEdit ? 'Modifica i dettagli della prescrizione' : 'Registra un nuovo farmaco' }}</p>
+        </div>
       </header>
 
       <form (ngSubmit)="onSubmit()" class="prescription-form">
@@ -80,24 +83,28 @@ import { HealthService, Doctor, Illness } from '../../services/health.service';
     </div>
   `,
   styles: [`
-    .page-container { max-width: 800px; margin: 0 auto; padding: 2rem; }
-    .page-header h1 { color: var(--primary-color); display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem; }
-    .prescription-form { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-    .form-group { margin-bottom: 1rem; }
-    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-secondary); }
-    .form-group label i { margin-right: 0.5rem; color: var(--primary-color); }
-    .form-control { width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; }
-    .form-control:focus { outline: none; border-color: var(--primary-color); }
-    .form-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border-color); }
-    .btn { padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s; }
-    .btn-primary { background: var(--primary-color); color: white; }
-    .btn-primary:hover:not(:disabled) { background: var(--primary-dark); }
-    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .page-container { max-width: 700px; margin: 0 auto; padding: 2rem; }
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { color: var(--primary-color); display: flex; align-items: center; gap: 0.75rem; }
+    .page-header p { color: var(--text-muted); margin-top: 0.5rem; }
+    .prescription-form { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+    .form-group { display: flex; flex-direction: column; }
+    .form-group label { font-weight: 500; color: var(--text-secondary); margin-bottom: 0.5rem; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; }
+    .form-group label i { color: var(--primary-color); }
+    .form-control { width: 100%; padding: 0.75rem 1rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem; transition: border-color 0.2s, box-shadow 0.2s; background: white; }
+    .form-control:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(102,126,234,0.15); }
+    .form-control::placeholder { color: var(--text-muted); }
+    textarea.form-control { resize: vertical; min-height: 100px; }
+    .form-actions { display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%); color: white; }
+    .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
     .btn-secondary { background: var(--bg-tertiary); color: var(--text-secondary); }
-    .btn-secondary:hover { background: var(--border-color); }
-    .btn-danger { background: var(--danger); color: white; }
-    .btn-danger:hover { background: #dc2626; }
+    .btn-secondary:hover:not(:disabled) { background: var(--border-color); }
+    .btn-danger { background: var(--danger); color: white; margin-left: auto; }
+    .btn-danger:hover:not(:disabled) { background: #dc2626; }
   `]
 })
 export class PrescriptionFormComponent implements OnInit {

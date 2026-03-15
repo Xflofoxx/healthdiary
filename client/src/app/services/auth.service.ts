@@ -56,10 +56,6 @@ demoLogin(username: string, password: string): Observable<{ success: boolean; us
     this.currentUserSubject.next(user);
   }
 
-  logout(): Observable<unknown> {
-    return this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true });
-  }
-
   me(): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/me`, { withCredentials: true });
   }
