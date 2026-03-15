@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HealthService, Doctor, Illness } from '../../services/health.service';
+import { COMMON_MEDICATIONS, CommonMedication } from '../../data/common-medications';
 
 @Component({
   selector: 'app-prescription-form',
@@ -21,8 +22,42 @@ import { HealthService, Doctor, Illness } from '../../services/health.service';
         <div class="form-grid">
           <div class="form-group">
             <label for="medication"><i class="fas fa-pills"></i> Farmaco *</label>
-            <input type="text" id="medication" [(ngModel)]="form.medication" name="medication" required class="form-control" placeholder="Nome del farmaco">
+            <input type="text" 
+                   id="medication" 
+                   [(ngModel)]="form.medication" 
+                   name="medication" 
+                   required 
+                   class="form-control" 
+                   placeholder="Nome del farmaco"
+                   list="common-medications"
+                   (change)="onMedicationChange()">
+            <datalist id="common-medications">
+              @for (med of commonMedications; track med.id) {
+                <option [value]="med.name">{{ med.substance }} - {{ med.dosage }}</option>
+              }
+            </datalist>
           </div>
+
+          @if (selectedMedication) {
+            <div class="med-info">
+              <div class="med-detail">
+                <span class="med-label">Sostanza:</span>
+                <span class="med-value">{{ selectedMedication.substance }}</span>
+              </div>
+              <div class="med-detail">
+                <span class="med-label">Dosaggio:</span>
+                <span class="med-value">{{ selectedMedication.dosage }}</span>
+              </div>
+              <div class="med-detail">
+                <span class="med-label">Utilizzo:</span>
+                <span class="med-value">{{ selectedMedication.usage }}</span>
+              </div>
+              <div class="med-detail">
+                <span class="med-label">Categoria:</span>
+                <span class="med-value category-badge">{{ selectedMedication.category }}</span>
+              </div>
+            </div>
+          }
 
           <div class="form-group">
             <label for="dosage"><i class="fas fa-weight"></i> Dosaggio</label>
@@ -103,8 +138,14 @@ import { HealthService, Doctor, Illness } from '../../services/health.service';
     .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
     .btn-secondary { background: var(--bg-tertiary); color: var(--text-secondary); }
     .btn-secondary:hover:not(:disabled) { background: var(--border-color); }
-    .btn-danger { background: var(--danger); color: white; margin-left: auto; }
+    .btn-danger { background: var(--danger); color: white; }
     .btn-danger:hover:not(:disabled) { background: #dc2626; }
+    .med-info { grid-column: 1 / -1; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 12px; padding: 1rem; margin-top: 0.5rem; }
+    .med-detail { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .med-detail:last-child { margin-bottom: 0; }
+    .med-label { font-weight: 600; color: var(--text-secondary); min-width: 80px; }
+    .med-value { color: var(--text-primary); }
+    .category-badge { background: #dbeafe; color: #2563eb; padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
   `]
 })
 export class PrescriptionFormComponent implements OnInit {
@@ -117,6 +158,8 @@ export class PrescriptionFormComponent implements OnInit {
   id = '';
   illnesses: Illness[] = [];
   doctors: Doctor[] = [];
+  commonMedications = COMMON_MEDICATIONS;
+  selectedMedication: CommonMedication | null = null;
   
   form = {
     medication: '',
@@ -153,7 +196,21 @@ export class PrescriptionFormComponent implements OnInit {
         illnessId: p.illnessId || '',
         doctorId: (p as any).doctorId || ''
       };
+      this.onMedicationChange();
     });
+  }
+
+  onMedicationChange() {
+    const medName = this.form.medication?.toLowerCase().trim();
+    if (!medName) {
+      this.selectedMedication = null;
+      return;
+    }
+    const found = this.commonMedications.find(m => m.name.toLowerCase() === medName);
+    this.selectedMedication = found || null;
+    if (this.selectedMedication && !this.form.dosage) {
+      this.form.dosage = this.selectedMedication.dosage;
+    }
   }
 
   onSubmit() {
